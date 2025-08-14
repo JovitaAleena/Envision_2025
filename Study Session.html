@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Session Timer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+        }
+
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #4a5568;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+        }
+
+        .subtitle {
+            color: #718096;
+            margin-bottom: 25px;
+            font-size: 1em;
+        }
+
+        .main-options {
+            display: flex;
+            gap: 15px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .main-option {
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f7fafc;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .main-option:hover {
+            border-color: #667eea;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .option-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .option-label {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 5px;
+        }
+
+        .option-description {
+            font-size: 0.9em;
+            color: #718096;
+        }
+
+        .mood-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .mood-item {
+            padding: 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f7fafc;
+        }
+
+        .mood-item:hover {
+            border-color: #667eea;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .mood-emoji {
+            font-size: 2em;
+            margin-bottom: 8px;
+        }
+
+        .mood-label {
+            font-size: 0.8em;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .task-form {
+            display: none;
+            text-align: left;
+            margin: 20px 0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .duration-inputs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .duration-inputs input {
+            flex: 1;
+        }
+
+        .timer-container {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .timer-display {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #333;
+            margin: 1rem 0;
+            font-family: 'Courier New', monospace;
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 15px;
+            border: 3px solid #667eea;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .start {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .pause {
+            background: #FFC107;
+            color: #333;
+        }
+
+        .reset {
+            background: #f44336;
+            color: white;
+        }
+
+        .back {
+            background: #667eea;
+            color: white;
+        }
+
+        .primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .session-info {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+            text-align: left;
+        }
+
+        .timer-status {
+            margin-top: 15px;
+            font-size: 1.1em;
+            color: #4a5568;
+            font-weight: 600;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .popup {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .popup h3 {
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .recommendation {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+
+        .tab-warning {
+            background: #ffd700;
+            color: #333;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: none;
+            font-weight: 600;
+        }
+
+        @media (max-width: 600px) {
+            .main-options {
+                flex-direction: column;
+            }
+            
+            .mood-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .duration-inputs {
+                flex-direction: column;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="mainScreen">
+            <h1>Study Session</h1>
+            <p class="subtitle">Choose how you'd like to start your study session today!</p>
+            
+            <div class="main-options">
+                <div class="main-option" onclick="showMoodSelection()">
+                    <div class="option-icon">😊</div>
+                    <div class="option-label">Mood-Based Study</div>
+                    <div class="option-description">Get personalized recommendations based on how you're feeling</div>
+                </div>
+                <div class="main-option" onclick="showTaskForm()">
+                    <div class="option-icon">📝</div>
+                    <div class="option-label">Add Tasks</div>
+                    <div class="option-description">Create custom study tasks with specific durations</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="moodScreen" style="display: none;">
+            <h1>How are you feeling?</h1>
+            <p class="subtitle">Choose your mood for personalized study recommendations!</p>
+            
+            <div class="mood-grid">
+                <div class="mood-item" onclick="selectMood('happy')">
+                    <div class="mood-emoji">😊</div>
+                    <div class="mood-label">Happy</div>
+                </div>
+                <div class="mood-item" onclick="selectMood('sad')">
+                    <div class="mood-emoji">😢</div>
+                    <div class="mood-label">Sad</div>
+                </div>
+                <div class="mood-item" onclick="selectMood('sleepy')">
+                    <div class="mood-emoji">😴</div>
+                    <div class="mood-label">Sleepy</div>
+                </div>
+                <div class="mood-item" onclick="selectMood('tired')">
+                    <div class="mood-emoji">😵</div>
+                    <div class="mood-label">Tired</div>
+                </div>
+                <div class="mood-item" onclick="selectMood('energetic')">
+                    <div class="mood-emoji">⚡</div>
+                    <div class="mood-label">Energetic</div>
+                </div>
+                <div class="mood-item" onclick="selectMood('focused')">
+                    <div class="mood-emoji">🎯</div>
+                    <div class="mood-label">Focused</div>
+                </div>
+                <div class="mood-item" onclick="selectMood('stressed')">
+                    <div class="mood-emoji">😰</div>
+                    <div class="mood-label">Stressed</div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button class="back" onclick="backToMain()">Back</button>
+            </div>
+        </div>
+
+        <div id="taskScreen" style="display: none;">
+            <h1>Add New Task</h1>
+            <p class="subtitle">Create a custom study task with your preferred duration</p>
+            
+            <div class="task-form" style="display: block;">
+                <div class="form-group">
+                    <label for="taskName">📝 Task Name</label>
+                    <input type="text" id="taskName" placeholder="e.g., Study Chapter 5, Complete Math Assignment" maxlength="100">
+                </div>
+                
+                <div class="form-group">
+                    <label for="taskSubject">📚 Subject (Optional)</label>
+                    <input type="text" id="taskSubject" placeholder="e.g., Mathematics, History, Programming" maxlength="50">
+                </div>
+                
+                <div class="form-group">
+                    <label>⏱️ Duration</label>
+                    <div class="duration-inputs">
+                        <input type="number" id="taskHours" placeholder="Hours" min="0" max="23" value="0">
+                        <input type="number" id="taskMinutes" placeholder="Minutes" min="1" max="59" value="25">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="taskPriority">⭐ Priority</label>
+                    <select id="taskPriority">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="taskDueDate">📅 Due Date (Optional)</label>
+                    <input type="date" id="taskDueDate">
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button class="primary" onclick="createTask()">Create Task</button>
+                <button class="back" onclick="backToMain()">Back</button>
+            </div>
+        </div>
+
+        <div id="timerContainer" class="timer-container">
+            <div class="tab-warning" id="tabWarning">
+                ⚠️ Timer was paused because you switched tabs. Welcome back!
+            </div>
+            <div class="session-info" id="sessionInfo"></div>
+            <div class="timer-display" id="display">00:00:00</div>
+            <div class="timer-status" id="timerStatus">Ready to start your session! 📚</div>
+            <div class="controls">
+                <button class="start" id="startBtn" onclick="startTimer()">Start</button>
+                <button class="pause" id="pauseBtn" onclick="pauseTimer()">Pause</button>
+                <button class="reset" onclick="resetTimer()">Reset</button>
+                <button class="back" onclick="backToMain()">Back</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="popupOverlay">
+        <div class="popup">
+            <h3>Study Recommendation</h3>
+            <div class="recommendation" id="recommendation"></div>
+            <div class="controls">
+                <button class="start" onclick="startStudySession()">Start Timer</button>
+                <button class="reset" onclick="closePopup()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const moodData = {
+            happy: {
+                subject: "Creative subjects like Literature or Art",
+                activity: "Try creative writing exercises or explore new topics that interest you!",
+                duration: 60,
+                reason: "Positive mood boosts motivation and focus."
+            },
+            sad: {
+                subject: "Comforting subjects like History or Philosophy",
+                activity: "Read inspiring stories or philosophical texts that uplift your mood",
+                duration: 25,
+                reason: "Low mood may reduce concentration; short bursts work better."
+            },
+            sleepy: {
+                subject: "Analytical subjects like Math",
+                activity: "Try doing Algebra problems or logic puzzles to wake up your brain",
+                duration: 20,
+                reason: "Energy is too low—better to rest after a short session."
+            },
+            tired: {
+                subject: "Light reading or Review",
+                activity: "Review previous notes or do some light reading to stay engaged",
+                duration: 15,
+                reason: "Physical fatigue makes it hard to focus—rest is a priority."
+            },
+            energetic: {
+                subject: "Challenging subjects like Physics or Chemistry",
+                activity: "Tackle complex problems and dive deep into difficult concepts",
+                duration: 90,
+                reason: "High energy allows you to work for the maximum productive limit."
+            },
+            focused: {
+                subject: "Your most important subject",
+                activity: "Work on your biggest project or most challenging assignment",
+                duration: 75,
+                reason: "Strong concentration—can handle a solid, but not overly long, session."
+            },
+            stressed: {
+                subject: "Familiar subjects you're comfortable with",
+                activity: "Start with easier topics to build confidence and reduce anxiety",
+                duration: 30,
+                reason: "Stress reduces efficiency; better to break study into smaller chunks."
+            }
+        };
+
+        let currentMood = '';
+        let currentTask = null;
+        let timeLeft = 0;
+        let timerInterval = null;
+        let isRunning = false;
+        let isPaused = false;
+        let targetTime = 0;
+        let startTime;
+        let pausedTime = 0;
+        let wasRunningBeforeTabSwitch = false;
+
+        // Task storage functions
+        function saveTaskToStorage(task) {
+            let tasks = JSON.parse(localStorage.getItem('studyTasks') || '[]');
+            tasks.push(task);
+            localStorage.setItem('studyTasks', JSON.stringify(tasks));
+        }
+
+        function updateTaskInStorage(taskId, updates) {
+            let tasks = JSON.parse(localStorage.getItem('studyTasks') || '[]');
+            const taskIndex = tasks.findIndex(task => task.id === taskId);
+            if (taskIndex !== -1) {
+                tasks[taskIndex] = { ...tasks[taskIndex], ...updates };
+                localStorage.setItem('studyTasks', JSON.stringify(tasks));
+            }
+        }
+
+        function formatTime(seconds) {
+            const hours = Math.floor(seconds / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const secs = seconds % 60;
+            return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        }
+
+        function formatDuration(minutes) {
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            if (hours > 0) {
+                return `${hours}h ${mins}m`;
+            }
+            return `${mins}m`;
+        }
+
+        function showMoodSelection() {
+            document.getElementById('mainScreen').style.display = 'none';
+            document.getElementById('moodScreen').style.display = 'block';
+        }
+
+        function showTaskForm() {
+            document.getElementById('mainScreen').style.display = 'none';
+            document.getElementById('taskScreen').style.display = 'block';
+            
+            // Set default due date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('taskDueDate').value = today;
+        }
+
+        function backToMain() {
+            document.getElementById('mainScreen').style.display = 'block';
+            document.getElementById('moodScreen').style.display = 'none';
+            document.getElementById('taskScreen').style.display = 'none';
+            document.getElementById('timerContainer').style.display = 'none';
+            resetTimer();
+        }
+
+        function createTask() {
+            const taskName = document.getElementById('taskName').value.trim();
+            const taskSubject = document.getElementById('taskSubject').value.trim();
+            const taskHours = parseInt(document.getElementById('taskHours').value) || 0;
+            const taskMinutes = parseInt(document.getElementById('taskMinutes').value) || 0;
+            const taskPriority = document.getElementById('taskPriority').value;
+            const taskDueDate = document.getElementById('taskDueDate').value;
+
+            if (!taskName) {
+                alert('Please enter a task name!');
+                return;
+            }
+
+            if (taskHours === 0 && taskMinutes === 0) {
+                alert('Please set a duration greater than 0!');
+                return;
+            }
+
+            const totalMinutes = taskHours * 60 + taskMinutes;
+            if (totalMinutes > 1440) {
+                alert('Duration cannot exceed 24 hours!');
+                return;
+            }
+
+            // Generate unique task ID
+            const taskId = Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+            
+            currentTask = {
+                id: taskId,
+                name: taskName,
+                subject: taskSubject || 'General Study',
+                duration: totalMinutes,
+                priority: taskPriority,
+                dueDate: taskDueDate,
+                type: 'custom',
+                status: 'pending',
+                createdAt: new Date().toISOString(),
+                actualTimeSpent: 0
+            };
+
+            // Save task to storage immediately as pending
+            saveTaskToStorage(currentTask);
+
+            targetTime = totalMinutes * 60;
+            timeLeft = targetTime;
+
+            document.getElementById('taskScreen').style.display = 'none';
+            document.getElementById('timerContainer').style.display = 'block';
+            
+            const priorityEmoji = taskPriority === 'high' ? '🔴' : taskPriority === 'medium' ? '🟡' : '🟢';
+            const dueDateText = taskDueDate ? new Date(taskDueDate).toLocaleDateString() : 'Not set';
+            
+            document.getElementById('sessionInfo').innerHTML = `
+                <strong>Task:</strong> ${taskName}<br>
+                <strong>Subject:</strong> ${taskSubject || 'General Study'}<br>
+                <strong>Duration:</strong> ${formatDuration(totalMinutes)}<br>
+                <strong>Priority:</strong> ${priorityEmoji} ${taskPriority.charAt(0).toUpperCase() + taskPriority.slice(1)}<br>
+                <strong>Due Date:</strong> ${dueDateText}
+            `;
+            
+            updateTimerStatus('Task ready! Click Start when you\'re ready to begin 📚');
+            document.getElementById('display').textContent = formatTime(timeLeft);
+
+            // Clear form
+            document.getElementById('taskName').value = '';
+            document.getElementById('taskSubject').value = '';
+            document.getElementById('taskHours').value = '0';
+            document.getElementById('taskMinutes').value = '25';
+            document.getElementById('taskPriority').value = 'medium';
+            document.getElementById('taskDueDate').value = '';
+        }
+
+        function selectMood(mood) {
+            currentMood = mood;
+            const data = moodData[mood];
+            
+            // Generate unique task ID for mood-based session
+            const taskId = Date.now() + '-mood-' + Math.random().toString(36).substr(2, 9);
+            
+            currentTask = {
+                id: taskId,
+                type: 'mood',
+                name: `${mood.charAt(0).toUpperCase() + mood.slice(1)} Study Session`,
+                subject: data.subject,
+                activity: data.activity,
+                duration: data.duration,
+                mood: mood,
+                status: 'pending',
+                createdAt: new Date().toISOString(),
+                actualTimeSpent: 0,
+                dueDate: new Date().toISOString().split('T')[0] // Today
+            };
+
+            // Save mood-based task to storage
+            saveTaskToStorage(currentTask);
+            
+            targetTime = data.duration * 60;
+            timeLeft = targetTime;
+            
+            document.getElementById('recommendation').innerHTML = `
+                <strong>📖 Subject:</strong> ${data.subject}<br>
+                <strong>⏱️ Duration:</strong> ${data.duration} minutes<br>
+                <strong>💡 Reason:</strong> ${data.reason}<br>
+                <strong>✨ Activity:</strong> ${data.activity}
+            `;
+            document.getElementById('popupOverlay').style.display = 'flex';
+        }
+
+        function startStudySession() {
+            closePopup();
+            document.getElementById('moodScreen').style.display = 'none';
+            document.getElementById('timerContainer').style.display = 'block';
+            
+            const data = moodData[currentMood];
+            document.getElementById('sessionInfo').innerHTML = `
+                <strong>Mood:</strong> ${currentMood.charAt(0).toUpperCase() + currentMood.slice(1)}<br>
+                <strong>Duration:</strong> ${data.duration} minutes<br>
+                <strong>Subject:</strong> ${data.subject}<br>
+                <strong>Activity:</strong> ${data.activity}
+            `;
+            updateTimerStatus('Session starting... Get ready! 📚');
+            timeLeft = targetTime;
+            document.getElementById('display').textContent = formatTime(timeLeft);
+            startTimer();
+        }
+
+        function updateTimer() {
+            const now = Date.now();
+            const elapsed = Math.floor((now - startTime) / 1000);
+            timeLeft = Math.max(0, targetTime - elapsed);
+            
+            document.getElementById('display').textContent = formatTime(timeLeft);
+            
+            if (timeLeft === 0) {
+                clearInterval(timerInterval);
+                isRunning = false;
+                
+                // Calculate actual time spent and mark task as completed
+                const actualTimeSpent = Math.floor((targetTime - timeLeft) / 60); // in minutes
+                updateTaskInStorage(currentTask.id, {
+                    status: 'completed',
+                    completedAt: new Date().toISOString(),
+                    actualTimeSpent: actualTimeSpent
+                });
+                
+                updateTimerStatus('Time is up! Great work! 🎉');
+                
+                // Show completion notification
+                const taskName = currentTask?.name || `${currentTask?.mood || 'Study'} session`;
+                alert(`${taskName} completed! Task has been marked as complete in your progress. Take a break and celebrate your achievement! 🎉`);
+                
+                // Update button states
+                document.getElementById('startBtn').textContent = 'Start New';
+                document.getElementById('startBtn').style.background = '#4CAF50';
+            }
+        }
+
+        function startTimer() {
+            if (!isRunning && timeLeft > 0) {
+                isRunning = true;
+                isPaused = false;
+                startTime = Date.now() - (targetTime - timeLeft) * 1000;
+                timerInterval = setInterval(updateTimer, 100);
+                updateTimerStatus('Timer running... Stay focused! 📚');
+                
+                // Update button states
+                document.getElementById('startBtn').textContent = 'Running';
+                document.getElementById('startBtn').style.background = '#28a745';
+                
+                // Hide tab warning if visible
+                document.getElementById('tabWarning').style.display = 'none';
+            }
+        }
+
+        function pauseTimer() {
+            if (isRunning) {
+                clearInterval(timerInterval);
+                isRunning = false;
+                isPaused = true;
+                updateTimerStatus('Timer paused ⏸️ Click Start to resume');
+                
+                // Update button states
+                document.getElementById('startBtn').textContent = 'Resume';
+                document.getElementById('startBtn').style.background = '#4CAF50';
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            isPaused = false;
+            timeLeft = targetTime;
+            document.getElementById('display').textContent = formatTime(timeLeft);
+            updateTimerStatus('Timer reset! Ready to start again 🔄');
+            
+            // Reset button states
+            document.getElementById('startBtn').textContent = 'Start';
+            document.getElementById('startBtn').style.background = '#4CAF50';
+            document.getElementById('tabWarning').style.display = 'none';
+        }
+
+        function closePopup() {
+            document.getElementById('popupOverlay').style.display = 'none';
+        }
+
+        function updateTimerStatus(message) {
+            document.getElementById('timerStatus').textContent = message;
+        }
+
+        // Enhanced tab visibility handling with automatic pause/resume
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                // Tab became hidden
+                if (isRunning) {
+                    wasRunningBeforeTabSwitch = true;
+                    clearInterval(timerInterval);
+                    isRunning = false;
+                    updateTimerStatus('Timer paused - you switched tabs ⏸️');
+                    document.getElementById('startBtn').textContent = 'Resume';
+                    document.getElementById('startBtn').style.background = '#FFC107';
+                } else {
+                    wasRunningBeforeTabSwitch = false;
+                }
+            } else {
+                // Tab became visible again
+                if (wasRunningBeforeTabSwitch && timeLeft > 0) {
+                    // Show brief warning and auto-resume after 2 seconds
+                    document.getElementById('tabWarning').style.display = 'block';
+                    updateTimerStatus('Welcome back! Resuming in 2 seconds... 🔄');
+                    
+                    setTimeout(() => {
+                        document.getElementById('tabWarning').style.display = 'none';
+                        if (timeLeft > 0) {
+                            startTimer();
+                        }
+                        wasRunningBeforeTabSwitch = false;
+                    }, 2000);
+                } else if (wasRunningBeforeTabSwitch && timeLeft === 0) {
+                    // Timer finished while away
+                    updateTimerStatus('Timer completed while you were away! 🎉');
+                    wasRunningBeforeTabSwitch = false;
+                }
+            }
+        });
+
+        // Close popup when clicking outside
+        document.getElementById('popupOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePopup();
+            }
+        });
+
+        // Add keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (document.getElementById('timerContainer').style.display !== 'none') {
+                switch(e.key) {
+                    case ' ': // Spacebar
+                        e.preventDefault();
+                        if (isRunning) {
+                            pauseTimer();
+                        } else {
+                            startTimer();
+                        }
+                        break;
+                    case 'r':
+                    case 'R':
+                        if (e.ctrlKey || e.metaKey) {
+                            e.preventDefault();
+                            resetTimer();
+                        }
+                        break;
+                }
+            }
+        });
+
+        // Set default due date on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('taskDueDate').value = today;
+        });
+    </script>
+</body>
+</html>
