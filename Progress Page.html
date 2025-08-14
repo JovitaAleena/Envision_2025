@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Progress - FocusSync</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .badges-btn {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .badges-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .time-selector {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .time-btn {
+            background: #333;
+            border: none;
+            color: #e0e0e0;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .time-btn.active {
+            background: #ffd700;
+            color: #333;
+        }
+
+        .time-btn:hover {
+            background: #555;
+        }
+
+        .time-btn.active:hover {
+            background: #ffed4e;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: #2a2a2a;
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid #444;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .profile-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+
+        .profile-details h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-details p {
+            opacity: 0.8;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .profile-stat {
+            text-align: center;
+        }
+
+        .profile-stat .number {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .profile-stat .label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .chart-container {
+            background: #2a2a2a;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            border: 1px solid #444;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .chart-title {
+            font-size: 1.5rem;
+            color: #ffd700;
+        }
+
+        .chart-filters {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .filter-btn {
+            background: #444;
+            border: none;
+            color: #e0e0e0;
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn.active {
+            background: #ffd700;
+            color: #333;
+        }
+
+        /* Updated Heatmap Styles */
+        .heatmap-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #8b949e;
+        }
+
+        .heatmap-time-filter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .heatmap-time-filter select {
+            background-color: #333;
+            color: #e0e0e0;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        .heatmap-legend {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .heatmap-legend-squares {
+            display: flex;
+            gap: 2px;
+        }
+
+        .heatmap-legend-square {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+        }
+
+        .heatmap-grid {
+            display: grid;
+            gap: 3px;
+            grid-template-columns: auto 1fr;
+            align-items: start;
+        }
+
+        .heatmap-day-labels {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            font-size: 12px;
+            color: #8b949e;
+            padding-right: 10px;
+            padding-top: 15px;
+        }
+
+        .heatmap-day-label {
+            height: 11px;
+            display: flex;
+            align-items: center;
+            line-height: 1;
+        }
+
+        .heatmap-calendar-area {
+            position: relative;
+        }
+
+        .heatmap-month-labels {
+            display: grid;
+            grid-template-columns: repeat(53, 1fr);
+            gap: 3px;
+            font-size: 12px;
+            color: #8b949e;
+            margin-bottom: 8px;
+            padding-left: 0;
+        }
+
+        .heatmap-month-label {
+            text-align: left;
+        }
+
+        .heatmap-weeks-grid {
+            display: grid;
+            grid-template-columns: repeat(53, 1fr);
+            gap: 3px;
+        }
+
+        .heatmap-week-column {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .heatmap-day-square {
+            width: 11px;
+            height: 11px;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+            position: relative;
+        }
+
+        .heatmap-day-square:hover {
+            opacity: 0.8;
+            outline: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Activity levels for heatmap */
+        .heatmap-level-0 { background-color: #1a1a1a; }
+        .heatmap-level-1 { background-color: #0e4429; }
+        .heatmap-level-2 { background-color: #006d32; }
+        .heatmap-level-3 { background-color: #26a641; }
+        .heatmap-level-4 { background-color: #39d353; }
+
+        .heatmap-tooltip {
+            position: absolute;
+            background-color: #1c2128;
+            border: 1px solid #30363d;
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 12px;
+            color: #f0f6fc;
+            pointer-events: none;
+            z-index: 1000;
+            white-space: nowrap;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .heatmap-tooltip.show {
+            opacity: 1;
+        }
+
+        .progress-chart {
+            height: 300px;
+            position: relative;
+            background: #333;
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .chart-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .chart-line {
+            fill: none;
+            stroke-width: 3;
+            stroke: url(#gradient);
+        }
+
+        .chart-area {
+            fill: url(#areaGradient);
+            opacity: 0.3;
+        }
+
+        .chart-dot {
+            fill: #ffd700;
+            stroke: #333;
+            stroke-width: 2;
+        }
+
+        .mood-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .mood-card {
+            background: #2a2a2a;
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid #444;
+            text-align: center;
+        }
+
+        .mood-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .mood-name {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #ffd700;
+        }
+
+        .mood-time {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .mood-percentage {
+            color: #aaa;
+        }
+
+        .tasks-section {
+            background: #2a2a2a;
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid #444;
+        }
+
+        .tasks-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .tasks-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .task-stat {
+            text-align: center;
+        }
+
+        .task-stat .number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffd700;
+            display: block;
+        }
+
+        .task-stat .label {
+            color: #aaa;
+            margin-top: 0.5rem;
+        }
+
+        .recent-tasks {
+            margin-top: 2rem;
+        }
+
+        .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #333;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .task-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .task-status {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .task-status.completed {
+            background: #26a641;
+            color: white;
+        }
+
+        .task-status.pending {
+            background: #ffd700;
+            color: #333;
+        }
+
+        .achievement-banner {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #333;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .note {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #8b949e;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .badges-btn {
+                position: static;
+                margin: 1rem auto 0;
+                display: block;
+                width: fit-content;
+            }
+
+            .header {
+                padding: 1rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="#" class="badges-btn" onclick="viewBadges()">🏆 Badges</a>
+        <h1>Study Progress Dashboard</h1>
+        <p>Track your learning journey and achievements</p>
+    </div>
+
+    <div class="container">
+        <div class="achievement-banner">
+            🎉 Congratulations! You've completed your 8-day study streak!
+        </div>
+
+        <div class="time-selector">
+            <button class="time-btn" onclick="setTimeRange('day')">Last Day</button>
+            <button class="time-btn" onclick="setTimeRange('week')">Last Week</button>
+            <button class="time-btn" onclick="setTimeRange('month')">Last Month</button>
+            <button class="time-btn" onclick="setTimeRange('3months')">Last 3 Months</button>
+            <button class="time-btn active" onclick="setTimeRange('all')">All Time</button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card profile-card">
+                <div class="profile-info">
+                    <div class="profile-avatar">👨‍🎓</div>
+                    <div class="profile-details">
+                        <h3>Alex Johnson</h3>
+                        <p>Computer Science Student</p>
+                        <p>Member since Jan 2024</p>
+                    </div>
+                </div>
+                <div class="profile-stats">
+                    <div class="profile-stat">
+                        <div class="number">127</div>
+                        <div class="label">Total Hours</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="number">8</div>
+                        <div class="label">Current Streak</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <h3 style="color: #ffd700; margin-bottom: 1rem;">📚 Study Time</h3>
+                <div class="profile-stats">
+                    <div class="profile-stat">
+                        <div class="number" style="color: #ffd700;">127h</div>
+                        <div class="label">Total Hours</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="number" style="color: #ffd700;">4.2h</div>
+                        <div class="label">Daily Average</div>
+                    </div>
+                </div>
+                <div class="profile-stats" style="margin-top: 1rem;">
+                    <div class="profile-stat">
+                        <div class="number" style="color: #ffd700;">32h</div>
+                        <div class="label">This Month</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="number" style="color: #ffd700;">95h</div>
+                        <div class="label">This Year</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <h3 style="color: #ffd700; margin-bottom: 1rem;">🎯 Performance</h3>
+                <div class="profile-stats">
+                    <div class="profile-stat">
+                        <div class="number" style="color: #26a641;">94%</div>
+                        <div class="label">Focus Rate</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="number" style="color: #ffd700;">15</div>
+                        <div class="label">Badges Earned</div>
+                    </div>
+                </div>
+                <div class="profile-stats" style="margin-top: 1rem;">
+                    <div class="profile-stat">
+                        <div class="number" style="color: #667eea;">156</div>
+                        <div class="label">Sessions</div>
+                    </div>
+                    <div class="profile-stat">
+                        <div class="number" style="color: #764ba2;">49min</div>
+                        <div class="label">Avg Session</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-header">
+                <h3 class="chart-title">📈 Study Progress Over Time</h3>
+                <div class="chart-filters">
+                    <button class="filter-btn active" onclick="setChart('hours')">Hours</button>
+                    <button class="filter-btn" onclick="setChart('sessions')">Sessions</button>
+                    <button class="filter-btn" onclick="setChart('focus')">Focus Rate</button>
+                </div>
+            </div>
+            <div class="progress-chart">
+                <svg class="chart-svg" id="progressChart">
+                    <defs>
+                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#667eea;stop-opacity:0.4" />
+                            <stop offset="100%" style="stop-color:#764ba2;stop-opacity:0.1" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            <p style="text-align: center; color: #aaa; margin-top: 1rem;" id="chartSummary">
+                Study hours have increased by +23% compared to last month
+            </p>
+        </div>
+
+        <div class="chart-container">
+            <div class="chart-header">
+                <h3 class="chart-title">🔥 Study Activity Heatmap</h3>
+                <p style="color: #aaa;">Your daily study activity over the last 12 months</p>
+            </div>
+            
+            <div class="heatmap-header">
+                <div class="heatmap-time-filter">
+                    <select>
+                        <option>last 12 months</option>
+                        <option>last 6 months</option>
+                        <option>last 3 months</option>
+                    </select>
+                    <span>127 study sessions</span>
+                </div>
+                <div class="heatmap-legend">
+                    <span>less</span>
+                    <div class="heatmap-legend-squares">
+                        <div class="heatmap-legend-square heatmap-level-0"></div>
+                        <div class="heatmap-legend-square heatmap-level-1"></div>
+                        <div class="heatmap-legend-square heatmap-level-2"></div>
+                        <div class="heatmap-legend-square heatmap-level-3"></div>
+                        <div class="heatmap-legend-square heatmap-level-4"></div>
+                    </div>
+                    <span>more</span>
+                </div>
+            </div>
+
+            <div class="heatmap-grid">
+                <div class="heatmap-day-labels">
+                    <div class="heatmap-day-label"></div>
+                    <div class="heatmap-day-label">monday</div>
+                    <div class="heatmap-day-label"></div>
+                    <div class="heatmap-day-label">wednesday</div>
+                    <div class="heatmap-day-label"></div>
+                    <div class="heatmap-day-label">friday</div>
+                    <div class="heatmap-day-label"></div>
+                </div>
+
+                <div class="heatmap-calendar-area">
+                    <div class="heatmap-month-labels" id="heatmapMonthLabels"></div>
+                    <div class="heatmap-weeks-grid" id="heatmapWeeksGrid"></div>
+                </div>
+            </div>
+
+            <div class="note">
+                Note: All activity data is using UTC time.
+            </div>
+        </div>
+
+        <h3 style="color: #ffd700; margin-bottom: 1.5rem; font-size: 1.8rem;">😊 Study Moods & Time Distribution</h3>
+        <div class="mood-grid">
+            <div class="mood-card">
+                <div class="mood-icon">😊</div>
+                <div class="mood-name">Focused</div>
+                <div class="mood-time">45h</div>
+                <div class="mood-percentage">35% of total time</div>
+            </div>
+            <div class="mood-card">
+                <div class="mood-icon">🔥</div>
+                <div class="mood-name">Motivated</div>
+                <div class="mood-time">38h</div>
+                <div class="mood-percentage">30% of total time</div>
+            </div>
+            <div class="mood-card">
+                <div class="mood-icon">😴</div>
+                <div class="mood-name">Tired</div>
+                <div class="mood-time">25h</div>
+                <div class="mood-percentage">20% of total time</div>
+            </div>
+            <div class="mood-card">
+                <div class="mood-icon">😅</div>
+                <div class="mood-name">Stressed</div>
+                <div class="mood-time">19h</div>
+                <div class="mood-percentage">15% of total time</div>
+            </div>
+        </div>
+
+        <div class="tasks-section">
+            <div class="tasks-header">
+                <h3 style="color: #ffd700; font-size: 1.8rem;">✅ Tasks Completed</h3>
+            </div>
+            
+            <div class="tasks-stats">
+                <div class="task-stat">
+                    <span class="number">284</span>
+                    <div class="label">Total Completed</div>
+                </div>
+                <div class="task-stat">
+                    <span class="number">23</span>
+                    <div class="label">This Week</div>
+                </div>
+                <div class="task-stat">
+                    <span class="number">89%</span>
+                    <div class="label">Success Rate</div>
+                </div>
+                <div class="task-stat">
+                    <span class="number">12</span>
+                    <div class="label">Pending</div>
+                </div>
+            </div>
+
+            <div class="recent-tasks">
+                <h4 style="margin-bottom: 1rem; color: #e0e0e0;">Recent Tasks</h4>
+                <div class="task-item">
+                    <div class="task-info">
+                        <div class="task-status completed">✓</div>
+                        <div>
+                            <div>Complete Chapter 5: Data Structures</div>
+                            <small style="color: #aaa;">Computer Science • 2 hours</small>
+                        </div>
+                    </div>
+                    <div style="color: #aaa;">Today</div>
+                </div>
+                <div class="task-item">
+                    <div class="task-info">
+                        <div class="task-status completed">✓</div>
+                        <div>
+                            <div>Practice Python Algorithms</div>
+                            <small style="color: #aaa;">Programming • 1.5 hours</small>
+                        </div>
+                    </div>
+                    <div style="color: #aaa;">Yesterday</div>
+                </div>
+                <div class="task-item">
+                    <div class="task-info">
+                        <div class="task-status pending">⏳</div>
+                        <div>
+                            <div>Review Linear Algebra Notes</div>
+                            <small style="color: #aaa;">Mathematics • Estimated 3 hours</small>
+                        </div>
+                    </div>
+                    <div style="color: #ffd700;">Due Tomorrow</div>
+                </div>
+                <div class="task-item">
+                    <div class="task-info">
+                        <div class="task-status completed">✓</div>
+                        <div>
+                            <div>Database Design Assignment</div>
+                            <small style="color: #aaa;">Database • 4 hours</small>
+                        </div>
+                    </div>
+                    <div style="color: #aaa;">2 days ago</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="heatmap-tooltip" id="heatmapTooltip"></div>
+
+    <script>
+        // Sample data for different time ranges and chart types
+        const studyData = {
+            'day': {
+                hours: [2, 1.5, 3, 2.5, 4, 3.5, 2.8, 3.2, 4.5, 3.8, 4.2, 5.1],
+                sessions: [3, 2, 4, 3, 5, 4, 3, 4, 6, 5, 5, 7],
+                focus: [85, 78, 92, 88, 94, 90, 86, 91, 96, 93, 95, 98],
+                labels: ['9AM', '10AM', '11AM', '12PM', '1PM', '2PM', '3PM', '4PM', '5PM', '6PM', '7PM', '8PM']
+            },
+            'week': {
+                hours: [18, 22, 16, 25, 28, 24, 30],
+                sessions: [25, 32, 18, 35, 40, 28, 42],
+                focus: [82, 88, 75, 91, 94, 87, 96],
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            },
+            'month': {
+                hours: [95, 108, 92, 126, 145, 132, 158],
+                sessions: [120, 145, 98, 165, 180, 142, 195],
+                focus: [78, 84, 72, 89, 92, 86, 94],
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6', 'Week 7']
+            },
+            '3months': {
+                hours: [380, 420, 390, 485, 520, 480, 580, 620, 590, 650, 680, 720],
+                sessions: [485, 520, 445, 598, 645, 578, 695, 742, 680, 758, 795, 842],
+                focus: [72, 76, 69, 83, 87, 81, 89, 92, 88, 94, 96, 94],
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+            },
+            'all': {
+                hours: [850, 920, 780, 1150, 1280, 1180, 1450, 1520, 1380, 1680, 1750, 1820, 2050, 2180, 2080, 2350, 2420, 2280],
+                sessions: [1050, 1180, 985, 1425, 1580, 1420, 1745, 1820, 1650, 1985, 2050, 2180, 2485, 2620, 2480, 2785, 2850, 2720],
+                focus: [65, 68, 62, 75, 80, 76, 84, 87, 83, 89, 91, 88, 92, 94, 91, 95, 96, 94],
+                labels: ['Q1 22', 'Q2 22', 'Q3 22', 'Q4 22', 'Q1 23', 'Q2 23', 'Q3 23', 'Q4 23', 'Q1 24', 'Q2 24', 'Q3 24', 'Q4 24', 'Q1 25', 'Q2 25', 'Q3 25', 'Q4 25', 'Q1 26', 'Q2 26']
+            }
+        };
+
+        let currentTimeRange = 'all';
+        let currentChartType = 'hours';
+
+        // Stats data for different time ranges
+        const statsData = {
+            'day': {
+                totalHours: 8.5,
+                dailyAvg: 8.5,
+                thisMonth: 32,
+                thisYear: 95,
+                focusRate: 92,
+                badges: 15,
+                sessions: 12,
+                avgSession: 42,
+                streak: 1,
+                tasksCompleted: 8,
+                thisWeek: 6,
+                successRate: 95,
+                pending: 3
+            },
+            'week': {
+                totalHours: 45.2,
+                dailyAvg: 6.5,
+                thisMonth: 32,
+                thisYear: 95,
+                focusRate: 89,
+                badges: 15,
+                sessions: 62,
+                avgSession: 44,
+                streak: 8,
+                tasksCompleted: 48,
+                thisWeek: 23,
+                successRate: 92,
+                pending: 8
+            },
+            'month': {
+                totalHours: 127,
+                dailyAvg: 4.2,
+                thisMonth: 127,
+                thisYear: 95,
+                focusRate: 94,
+                badges: 15,
+                sessions: 156,
+                avgSession: 49,
+                streak: 8,
+                tasksCompleted: 284,
+                thisWeek: 23,
+                successRate: 89,
+                pending: 12
+            },
+            '3months': {
+                totalHours: 485,
+                dailyAvg: 5.4,
+                thisMonth: 127,
+                thisYear: 485,
+                focusRate: 91,
+                badges: 15,
+                sessions: 428,
+                avgSession: 68,
+                streak: 8,
+                tasksCompleted: 856,
+                thisWeek: 23,
+                successRate: 91,
+                pending: 12
+            },
+            'all': {
+                totalHours: 2850,
+                dailyAvg: 4.2,
+                thisMonth: 127,
+                thisYear: 485,
+                focusRate: 94,
+                badges: 15,
+                sessions: 1847,
+                avgSession: 49,
+                streak: 8,
+                tasksCompleted: 2842,
+                thisWeek: 23,
+                successRate: 89,
+                pending: 12
+            }
+        };
+
+        // Heatmap functions
+        function generateStudyHeatmapData() {
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setFullYear(endDate.getFullYear() - 1);
+            
+            const data = [];
+            const currentDate = new Date(startDate);
+            
+            while (currentDate <= endDate) {
+                const activity = Math.floor(Math.random() * 5); // Random activity level 0-4
+                const hours = activity === 0 ? 0 : (activity * 1.2 + Math.random() * 2).toFixed(1);
+                data.push({
+                    date: new Date(currentDate),
+                    level: activity,
+                    hours: hours
+                });
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+            
+            return data;
+        }
+
+        function formatStudyDate(date) {
+            return date.toLocaleDateString('en-US', { 
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        function getStudyWeekNumber(date) {
+            const startOfYear = new Date(date.getFullYear(), 0, 1);
+            const startOfWeek = new Date(startOfYear);
+            startOfWeek.setDate(startOfYear.getDate() - startOfYear.getDay());
+            
+            const diffTime = date.getTime() - startOfWeek.getTime();
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            return Math.floor(diffDays / 7);
+        }
+
+        function createStudyHeatmap() {
+            const data = generateStudyHeatmapData();
+            const monthLabels = document.getElementById('heatmapMonthLabels');
+            const weeksGrid = document.getElementById('heatmapWeeksGrid');
+            const tooltip = document.getElementById('heatmapTooltip');
+            
+            // Clear existing content
+            monthLabels.innerHTML = '';
+            weeksGrid.innerHTML = '';
+            
+            // Group data by weeks
+            const weeks = {};
+            const monthPositions = {};
+            
+            data.forEach(item => {
+                const weekNum = getStudyWeekNumber(item.date);
+                const dayOfWeek = item.date.getDay();
+                
+                if (!weeks[weekNum]) {
+                    weeks[weekNum] = Array(7).fill(null);
+                }
+                weeks[weekNum][dayOfWeek] = item;
+                
+                // Track month positions
+                if (item.date.getDate() === 1) {
+                    monthPositions[weekNum] = item.date.toLocaleDateString('en-US', { month: 'short' });
+                }
+            });
+            
+            // Create month labels
+            for (let i = 0; i < 53; i++) {
+                const monthLabel = document.createElement('div');
+                monthLabel.className = 'heatmap-month-label';
+                if (monthPositions[i]) {
+                    monthLabel.textContent = monthPositions[i];
+                }
+                monthLabels.appendChild(monthLabel);
+            }
+            
+            // Create week columns
+            Object.keys(weeks).sort((a, b) => parseInt(a) - parseInt(b)).forEach(weekNum => {
+                const weekColumn = document.createElement('div');
+                weekColumn.className = 'heatmap-week-column';
+                
+                weeks[weekNum].forEach((day, dayIndex) => {
+                    const daySquare = document.createElement('div');
+                    daySquare.className = `heatmap-day-square heatmap-level-${day ? day.level : 0}`;
+                    
+                    if (day) {
+                        daySquare.addEventListener('mouseenter', (e) => {
+                            tooltip.innerHTML = `
+                                <div>${day.hours} hours studied on ${formatStudyDate(day.date)}</div>
+                            `;
+                            tooltip.classList.add('show');
+                        });
+                        
+                        daySquare.addEventListener('mousemove', (e) => {
+                            tooltip.style.left = e.pageX + 10 + 'px';
+                            tooltip.style.top = e.pageY - 10 + 'px';
+                        });
+                        
+                        daySquare.addEventListener('mouseleave', () => {
+                            tooltip.classList.remove('show');
+                        });
+                    } else {
+                        daySquare.addEventListener('mouseenter', (e) => {
+                            tooltip.innerHTML = `No study activity`;
+                            tooltip.classList.add('show');
+                        });
+                        
+                        daySquare.addEventListener('mousemove', (e) => {
+                            tooltip.style.left = e.pageX + 10 + 'px';
+                            tooltip.style.top = e.pageY - 10 + 'px';
+                        });
+                        
+                        daySquare.addEventListener('mouseleave', () => {
+                            tooltip.classList.remove('show');
+                        });
+                    }
+                    
+                    weekColumn.appendChild(daySquare);
+                });
+                
+                weeksGrid.appendChild(weekColumn);
+            });
+        }
+
+        function updateChart() {
+            const data = studyData[currentTimeRange][currentChartType];
+            const labels = studyData[currentTimeRange].labels;
+            const svg = document.getElementById('progressChart');
+            
+            // Clear previous chart
+            svg.innerHTML = `
+                <defs>
+                    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                    </linearGradient>
+                    <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#667eea;stop-opacity:0.4" />
+                        <stop offset="100%" style="stop-color:#764ba2;stop-opacity:0.1" />
+                    </linearGradient>
+                </defs>
+            `;
+            
+            const width = svg.clientWidth;
+            const height = svg.clientHeight;
+            const padding = 40;
+            const chartWidth = width - (padding * 2);
+            const chartHeight = height - (padding * 2);
+            
+            const maxValue = Math.max(...data);
+            const minValue = Math.min(...data);
+            const range = maxValue - minValue;
+            
+            // Create points
+            const points = data.map((value, index) => {
+                const x = padding + (index * chartWidth / (data.length - 1));
+                const y = height - padding - ((value - minValue) / range * chartHeight);
+                return { x, y, value };
+            });
+            
+            // Create area path
+            let areaPath = `M ${points[0].x} ${height - padding}`;
+            points.forEach(point => {
+                areaPath += ` L ${point.x} ${point.y}`;
+            });
+            areaPath += ` L ${points[points.length - 1].x} ${height - padding} Z`;
+            
+            // Create line path
+            let linePath = `M ${points[0].x} ${points[0].y}`;
+            points.forEach((point, index) => {
+                if (index > 0) {
+                    linePath += ` L ${point.x} ${point.y}`;
+                }
+            });
+            
+            // Add area
+            const area = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            area.setAttribute('d', areaPath);
+            area.setAttribute('class', 'chart-area');
+            svg.appendChild(area);
+            
+            // Add line
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            line.setAttribute('d', linePath);
+            line.setAttribute('class', 'chart-line');
+            svg.appendChild(line);
+            
+            // Add dots
+            points.forEach((point, index) => {
+                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                circle.setAttribute('cx', point.x);
+                circle.setAttribute('cy', point.y);
+                circle.setAttribute('r', '4');
+                circle.setAttribute('class', 'chart-dot');
+                
+                // Add tooltip
+                const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+                title.textContent = `${labels[index]}: ${point.value}${currentChartType === 'focus' ? '%' : currentChartType === 'hours' ? 'h' : ''}`;
+                circle.appendChild(title);
+                
+                svg.appendChild(circle);
+            });
+            
+            // Update summary text
+            const summaryTexts = {
+                hours: {
+                    day: "Today's study pattern shows peak productivity in evening hours",
+                    week: "Weekly study hours increased by 67% - great momentum!",
+                    month: "Monthly progress shows consistent improvement trend",
+                    '3months': "Quarterly hours up 89% - amazing growth!",
+                    all: "Overall study time shows exponential growth pattern"
+                },
+                sessions: {
+                    day: "Session frequency optimal between 4-8 PM",
+                    week: "Weekly sessions increased by 68% - excellent consistency!",
+                    month: "Session count shows steady upward trajectory",
+                    '3months': "Quarterly sessions demonstrate strong study habit formation",
+                    all: "Session frequency has grown 163% since starting"
+                },
+                focus: {
+                    day: "Focus rate peaks in evening - 98% maximum achieved",
+                    week: "Weekly focus improved 17% - distraction management working!",
+                    month: "Focus rate averaging 94% - exceptional concentration",
+                    '3months': "Quarterly focus maintained above 90% consistently",
+                    all: "Focus rate improved 45% since beginning - remarkable progress!"
+                }
+            };
+            
+            document.getElementById('chartSummary').textContent = summaryTexts[currentChartType][currentTimeRange];
+        }
+
+        function updateStats() {
+            const stats = statsData[currentTimeRange];
+            
+            // Update main stats
+            document.querySelector('.stat-card:nth-child(2) .profile-stats:nth-child(2) .profile-stat:nth-child(1) .number').textContent = `${stats.totalHours}h`;
+            document.querySelector('.stat-card:nth-child(2) .profile-stats:nth-child(2) .profile-stat:nth-child(2) .number').textContent = `${stats.dailyAvg}h`;
+            document.querySelector('.stat-card:nth-child(2) .profile-stats:nth-child(3) .profile-stat:nth-child(1) .number').textContent = `${stats.thisMonth}h`;
+            document.querySelector('.stat-card:nth-child(2) .profile-stats:nth-child(3) .profile-stat:nth-child(2) .number').textContent = `${stats.thisYear}h`;
+            
+            // Update performance stats
+            document.querySelector('.stat-card:nth-child(3) .profile-stats:nth-child(2) .profile-stat:nth-child(1) .number').textContent = `${stats.focusRate}%`;
+            document.querySelector('.stat-card:nth-child(3) .profile-stats:nth-child(2) .profile-stat:nth-child(2) .number').textContent = stats.badges;
+            document.querySelector('.stat-card:nth-child(3) .profile-stats:nth-child(3) .profile-stat:nth-child(1) .number').textContent = stats.sessions;
+            document.querySelector('.stat-card:nth-child(3) .profile-stats:nth-child(3) .profile-stat:nth-child(2) .number').textContent = `${stats.avgSession}min`;
+            
+            // Update task stats
+            document.querySelector('.task-stat:nth-child(1) .number').textContent = stats.tasksCompleted;
+            document.querySelector('.task-stat:nth-child(2) .number').textContent = stats.thisWeek;
+            document.querySelector('.task-stat:nth-child(3) .number').textContent = `${stats.successRate}%`;
+            document.querySelector('.task-stat:nth-child(4) .number').textContent = stats.pending;
+            
+            // Update streak
+            document.querySelector('.profile-card .profile-stats .profile-stat:nth-child(2) .number').textContent = stats.streak;
+        }
+
+        function setTimeRange(range) {
+            // Remove active class from all buttons
+            document.querySelectorAll('.time-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            currentTimeRange = range;
+            updateChart();
+            updateStats();
+            
+            console.log('Time range changed to:', range);
+        }
+
+        function setChart(type) {
+            // Remove active class from all filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+            
+            currentChartType = type;
+            updateChart();
+            
+            console.log('Chart type changed to:', type);
+        }
+
+        function viewBadges() {
+            // This would redirect to the badges page
+            alert('Redirecting to badges page... (This would show your earned badges and progress towards new ones)');
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            createStudyHeatmap();
+            updateChart();
+            updateStats();
+        });
+    </script>
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    let list = document.getElementById("taskList");
+
+    list.innerHTML = ""; // clear old content
+    tasks.forEach(task => {
+        let li = document.createElement("li");
+        li.textContent = task;
+        list.appendChild(li);
+    });
+});
+</script>
+
+</body>
+</html>
