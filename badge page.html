@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session Complete - FocusSync</title>
+    <nav style="position: fixed; top: 20px; right: 20px; display: flex; gap: 10px;">
+        <a href="all_badges.html" style="background: white; padding: 10px 20px; border-radius: 20px; text-decoration: none; color: #764ba2; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">View All Badges</a>
+    </nav>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        .completion-container {
+            background: white;
+            border-radius: 30px;
+            padding: 3rem;
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+            position: relative;
+            animation: slideInUp 0.8s ease-out;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .celebration-header {
+            margin-bottom: 2rem;
+        }
+
+        .celebration-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-20px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .completion-title {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .completion-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .session-stats {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 0.5rem;
+        }
+
+        .badges-earned {
+            margin-bottom: 2rem;
+        }
+
+        .badges-title {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+
+        .badges-grid {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .badge-earned {
+            background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.3);
+            transform: scale(0);
+            animation: badgeAppear 0.6s ease-out forwards;
+            min-width: 150px;
+        }
+
+        .badge-earned:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+
+        .badge-earned:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes badgeAppear {
+            0% {
+                transform: scale(0) rotate(-180deg);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1) rotate(0deg);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+
+        .badge-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .badge-name {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .progress-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .progress-title {
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .progress-items {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .progress-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .progress-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 8px;
+            width: 100px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 2s ease-out;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .share-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+        }
+
+        .share-title {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .share-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .share-btn {
+            background: #f0f0f0;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .share-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .share-btn.twitter { background: #1da1f2; color: white; }
+        .share-btn.linkedin { background: #0077b5; color: white; }
+        .share-btn.facebook { background: #1877f2; color: white; }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            animation: confetti-fall 4s linear infinite;
+            z-index: 1000;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .firework {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            animation: firework 1.5s ease-out;
+            z-index: 999;
+        }
+
+        @keyframes firework {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(20);
+                opacity: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .completion-container {
+                padding: 2rem;
+                margin: 1rem;
+            }
+
+            .completion-title {
+                font-size: 2rem;
+            }
+
+            .session-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="completion-container">
+        <div class="celebration-header">
+            <div class="celebration-icon">🎉</div>
+            <h1 class="completion-title">Session Complete!</h1>
+            <p class="completion-subtitle">Amazing work! You've earned new badges</p>
+        </div>
+
+        <div class="session-stats">
+            <div class="stat-item">
+                <span class="stat-number" id="sessionTime">25</span>
+                <span class="stat-label">Minutes Focused</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="distractions">0</span>
+                <span class="stat-label">Distractions</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="streakDays">8</span>
+                <span class="stat-label">Day Streak</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" id="studyPartner">Sarah</span>
+                <span class="stat-label">Study Partner</span>
+            </div>
+        </div>
+
+        <div class="badges-earned">
+            <h2 class="badges-title">🏆 Badges Earned This Session</h2>
+            <div class="badges-grid" id="badgesGrid">
+                <!-- Badges will be dynamically added here -->
+            </div>
+        </div>
+
+        <div class="progress-section">
+            <h3 class="progress-title">📈 Progress Towards Next Badges</h3>
+            <div class="progress-items">
+                <div class="progress-item">
+                    <div class="progress-info">
+                        <span>🔥 Week Warrior</span>
+                        <small>(7-day streak)</small>
+                    </div>
+                    <div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" data-progress="80" style="width: 0%"></div>
+                        </div>
+                        <small>6/7 days</small>
+                    </div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-info">
+                        <span>🧠 Deep Focus Guru</span>
+                        <small>(2+ hours no breaks)</small>
+                    </div>
+                    <div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" data-progress="75" style="width: 0%"></div>
+                        </div>
+                        <small>1.5/2 hours</small>
+                    </div>
+                </div>
+                <div class="progress-item">
+                    <div class="progress-info">
+                        <span>👥 Social Butterfly</span>
+                        <small>(Study with 5 different partners)</small>
+                    </div>
+                    <div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" data-progress="60" style="width: 0%"></div>
+                        </div>
+                        <small>3/5 partners</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="startNewSession()">Start New Session</button>
+            <a href="#" class="btn btn-secondary" onclick="viewAllBadges()">View All Badges</a>
+        </div>
+
+        <div class="share-section">
+            <h4 class="share-title">Share your achievement:</h4>
+            <div class="share-buttons">
+                <button class="share-btn twitter" onclick="shareToTwitter()">🐦</button>
+                <button class="share-btn linkedin" onclick="shareToLinkedIn()">💼</button>
+                <button class="share-btn facebook" onclick="shareToFacebook()">📘</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Session data (this would come from your backend)
+        const sessionData = {
+            duration: 25,
+            distractions: 0,
+            mood: 'focused',
+            studyPartner: 'Sarah',
+            streakDays: 8,
+            completedGoal: true,
+            earnedBadges: [
+                { icon: '🎯', name: 'Focus Master', description: 'Zero distractions!' },
+                { icon: '⚡', name: 'Speed Learner', description: 'Completed 25-min session' }
+            ]
+        };
+
+        // Initialize the page when loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCompletion();
+            createCelebrationEffects();
+            animateProgressBars();
+        });
+
+        function initializeCompletion() {
+            // Update session stats
+            document.getElementById('sessionTime').textContent = sessionData.duration;
+            document.getElementById('distractions').textContent = sessionData.distractions;
+            document.getElementById('streakDays').textContent = sessionData.streakDays;
+            
+            // Display earned badges
+            const badgesGrid = document.getElementById('badgesGrid');
+            sessionData.earnedBadges.forEach((badge, index) => {
+                const badgeElement = document.createElement('div');
+                badgeElement.className = 'badge-earned';
+                badgeElement.style.animationDelay = `${index * 0.3}s`;
+                badgeElement.innerHTML = `
+                    <span class="badge-icon">${badge.icon}</span>
+                    <div class="badge-name">${badge.name}</div>
+                `;
+                badgesGrid.appendChild(badgeElement);
+            });
+        }
+
+        function createCelebrationEffects() {
+            // Celebration effects removed
+        }
+
+        function animateProgressBars() {
+            setTimeout(() => {
+                const progressBars = document.querySelectorAll('.progress-fill');
+                progressBars.forEach(bar => {
+                    const progress = bar.getAttribute('data-progress');
+                    bar.style.width = progress + '%';
+                });
+            }, 2000);
+        }
+
+        function startNewSession() {
+            // Animate button
+            event.target.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                event.target.style.transform = 'scale(1)';
+                // Here you would redirect to the session page
+                alert('Starting new session... (This would redirect to the study session page)');
+            }, 150);
+        }
+
+        function viewAllBadges() {
+            // Here you would redirect to the badges page
+            alert('Redirecting to badges page... (This would show all your badges)');
+        }
+
+        function shareToTwitter() {
+            const text = `Just completed a ${sessionData.duration}-minute focused study session on FocusSync! Earned ${sessionData.earnedBadges.length} new badges 🏆 #ProductiveStudying #FocusSync`;
+            const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
+
+        function shareToLinkedIn() {
+            const text = `Proud to share that I just completed a distraction-free ${sessionData.duration}-minute study session! Consistency and focus are paying off 💪`;
+            const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}&summary=${encodeURIComponent(text)}`;
+            window.open(url, '_blank');
+        }
+
+        function shareToFacebook() {
+            const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`;
+            window.open(url, '_blank');
+        }
+
+        // Add some extra celebration when badges appear
+        setTimeout(() => {
+            const badges = document.querySelectorAll('.badge-earned');
+            badges.forEach((badge, index) => {
+                setTimeout(() => {
+                    badge.style.transform = 'scale(1.1)';
+                    setTimeout(() => {
+                        badge.style.transform = 'scale(1)';
+                    }, 200);
+                }, index * 500 + 2000);
+            });
+        }, 100);
+    </script>
+</body>
+</html>
