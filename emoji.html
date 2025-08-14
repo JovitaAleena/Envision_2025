@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How Are You Feeling?</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 90%;
+            padding: 3rem;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border-radius: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d, #4ecdc4);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+        }
+
+        .emoji-container {
+            display: flex;
+            justify-content: space-around;
+            gap: 2rem;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+        }
+
+        .emoji-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+            flex: 1;
+            min-width: 120px;
+            max-width: 150px;
+        }
+
+        .emoji-btn:hover {
+            transform: translateY(-10px) scale(1.05);
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .emoji-btn:active {
+            transform: translateY(-5px) scale(0.98);
+        }
+
+        .emoji-icon {
+            font-size: 4rem;
+            display: block;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .emoji-btn:hover .emoji-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .emoji-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        .good { border-color: #4ecdc4; }
+        .good:hover { 
+            background: rgba(78, 205, 196, 0.2);
+            border-color: #4ecdc4;
+        }
+
+        .normal { border-color: #ffd93d; }
+        .normal:hover { 
+            background: rgba(255, 217, 61, 0.2);
+            border-color: #ffd93d;
+        }
+
+        .sad { border-color: #ff6b6b; }
+        .sad:hover { 
+            background: rgba(255, 107, 107, 0.2);
+            border-color: #ff6b6b;
+        }
+
+        .reaction-display {
+            min-height: 120px;
+            margin: 3rem 0;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reaction-content {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .reaction-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reaction-emoji {
+            font-size: 5rem;
+            margin-bottom: 1rem;
+            animation: bounce 1s ease;
+        }
+
+        .reaction-text {
+            font-size: 1.4rem;
+            font-weight: 500;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-20px);
+            }
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .counter {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            text-align: center;
+        }
+
+        .count-item {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        .count-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffd93d;
+        }
+
+        .reset-btn {
+            margin-top: 2rem;
+            padding: 1rem 3rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 30px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .reset-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .floating-emoji {
+            position: absolute;
+            pointer-events: none;
+            font-size: 3rem;
+            opacity: 0;
+            animation: floatUp 2.5s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0) rotate(0deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-150px) rotate(360deg);
+            }
+        }
+
+        .comment-section {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .comment-section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #ffd93d;
+        }
+
+        .comment-section h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            color: #4ecdc4;
+        }
+
+        .comment-form {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .comment-form input,
+        .comment-form textarea {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s ease;
+        }
+
+        .comment-form input::placeholder,
+        .comment-form textarea::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .comment-form input:focus,
+        .comment-form textarea:focus {
+            outline: none;
+            border-color: #4ecdc4;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 15px rgba(78, 205, 196, 0.3);
+        }
+
+        .comment-form textarea {
+            resize: vertical;
+            min-height: 80px;
+            max-height: 150px;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .single-post-btn,
+        .form-buttons button {
+            padding: 0.8rem 1.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .single-post-btn:hover,
+        .form-buttons button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border-color: #4ecdc4;
+            background: rgba(78, 205, 196, 0.2);
+        }
+
+        .comments-container {
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .comment-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            border-left: 4px solid;
+            position: relative;
+            animation: slideIn 0.5s ease;
+        }
+
+        .comment-item.good { border-left-color: #4ecdc4; }
+        .comment-item.normal { border-left-color: #ffd93d; }
+        .comment-item.sad { border-left-color: #ff6b6b; }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .comment-emoji {
+            font-size: 1.2rem;
+        }
+
+        .comment-name {
+            font-weight: 600;
+            color: #ffd93d;
+        }
+
+        .comment-time {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-left: auto;
+        }
+
+        .comment-text {
+            line-height: 1.4;
+            opacity: 0.9;
+        }
+
+        .no-comments {
+            text-align: center;
+            opacity: 0.6;
+            font-style: italic;
+            padding: 2rem;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Custom scrollbar for comments */
+        .comments-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .comments-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+
+        .comments-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        .comments-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .emoji-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 1.5rem;
+            }
+            
+            .emoji-btn {
+                max-width: 200px;
+                width: 100%;
+            }
+            
+            .emoji-icon {
+                font-size: 3rem;
+            }
+            
+            .reaction-emoji {
+                font-size: 4rem;
+            }
+            
+            .counter {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .form-buttons {
+                flex-direction: column;
+            }
+
+            .single-post-btn,
+            .form-buttons button {
+                width: 100%;
+            }
+
+            .comment-header {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><span class="typewriter">What Is Your Mood Now?</span></h1>
+        <p class="subtitle">Click on the emoji that matches your mood</p>
+        
+        <div class="emoji-container">
+            <button class="emoji-btn good" onclick="react('😊', 'Feeling Great!', 'good')">
+                <span class="emoji-icon">😊</span>
+                <span class="emoji-label">Good</span>
+            </button>
+            
+            <button class="emoji-btn normal" onclick="react('😐', 'Just Okay', 'normal')">
+                <span class="emoji-icon">😐</span>
+                <span class="emoji-label">Normal</span>
+            </button>
+            
+            <button class="emoji-btn sad" onclick="react('😢', 'Not So Good', 'sad')">
+                <span class="emoji-icon">😢</span>
+                <span class="emoji-label">Sad</span>
+            </button>
+        </div>
+
+        <div class="reaction-display">
+            <div class="reaction-content" id="reactionContent">
+                <div class="reaction-text">Select how you're feeling today!</div>
+            </div>
+        </div>
+
+        <div class="counter">
+            <div class="count-item">
+                <div class="count-number" id="goodCount">0</div>
+                <div>Good Days</div>
+            </div>
+            <div class="count-item">
+                <div class="count-number" id="normalCount">0</div>
+                <div>Normal Days</div>
+            </div>
+            <div class="count-item">
+                <div class="count-number" id="sadCount">0</div>
+                <div>Sad Days</div>
+            </div>
+        </div>
+
+        <button class="reset-btn" onclick="resetCounters()">Reset All</button>
+
+        <div class="comment-section">
+            <h2>Share Your Feelings</h2>
+            <div class="comment-form">
+                <input type="text" id="nameInput" placeholder="Your name" maxlength="20">
+                <textarea id="commentInput" placeholder="How are you feeling today? Share your thoughts..." maxlength="200"></textarea>
+                <button class="single-post-btn" onclick="addComment()">Share Your Feelings</button>
+            </div>
+            
+            <div class="comments-display">
+                <h3>Community Feelings</h3>
+                <div class="comments-container" id="commentsContainer">
+                    <div class="no-comments">Be the first to share how you're feeling!</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let counts = {
+            good: 0,
+            normal: 0,
+            sad: 0
+        };
+
+        let comments = [];
+
+        function react(emoji, message, type) {
+            // Update counter
+            counts[type]++;
+            document.getElementById(type + 'Count').textContent = counts[type];
+
+            // Update reaction display
+            const reactionContent = document.getElementById('reactionContent');
+            reactionContent.classList.remove('show');
+            
+            setTimeout(() => {
+                reactionContent.innerHTML = `
+                    <div class="reaction-emoji">${emoji}</div>
+                    <div class="reaction-text">${message}</div>
+                `;
+                reactionContent.classList.add('show');
+            }, 200);
+
+            // Create floating emoji effect
+            createFloatingEmoji(emoji, event.target);
+
+            // Add subtle screen pulse
+            document.body.style.filter = 'brightness(1.1)';
+            setTimeout(() => {
+                document.body.style.filter = 'brightness(1)';
+            }, 200);
+        }
+
+        function addComment() {
+            const nameInput = document.getElementById('nameInput');
+            const commentInput = document.getElementById('commentInput');
+            
+            const name = nameInput.value.trim();
+            const commentText = commentInput.value.trim();
+            
+            if (!name) {
+                alert('Please enter your name!');
+                nameInput.focus();
+                return;
+            }
+            
+            if (!commentText) {
+                alert('Please share how you\'re feeling!');
+                commentInput.focus();
+                return;
+            }
+
+            // Create comment object with neutral mood
+            const comment = {
+                id: Date.now(),
+                name: name,
+                text: commentText,
+                mood: 'normal',
+                emoji: '💭',
+                timestamp: new Date()
+            };
+
+            // Add to comments array
+            comments.unshift(comment);
+
+            // Update display
+            displayComments();
+
+            // Clear form
+            nameInput.value = '';
+            commentInput.value = '';
+
+            // Show success message
+            showSuccessMessage('💭');
+        }
+
+        function displayComments() {
+            const container = document.getElementById('commentsContainer');
+            
+            if (comments.length === 0) {
+                container.innerHTML = '<div class="no-comments">Be the first to share how you\'re feeling!</div>';
+                return;
+            }
+
+            container.innerHTML = comments.map(comment => `
+                <div class="comment-item ${comment.mood}">
+                    <div class="comment-header">
+                        <span class="comment-emoji">${comment.emoji}</span>
+                        <span class="comment-name">${escapeHtml(comment.name)}</span>
+                        <span class="comment-time">${formatTime(comment.timestamp)}</span>
+                    </div>
+                    <div class="comment-text">${escapeHtml(comment.text)}</div>
+                </div>
+            `).join('');
+
+            // Scroll to top of comments
+            container.scrollTop = 0;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatTime(date) {
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            
+            if (diffMins < 1) return 'just now';
+            if (diffMins < 60) return `${diffMins}m ago`;
+            if (diffHours < 24) return `${diffHours}h ago`;
+            return date.toLocaleDateString();
+        }
+
+        function showSuccessMessage(emoji) {
+            const reactionContent = document.getElementById('reactionContent');
+            reactionContent.classList.remove('show');
+            
+            setTimeout(() => {
+                reactionContent.innerHTML = `
+                    <div class="reaction-emoji">${emoji}</div>
+                    <div class="reaction-text">Thanks for sharing your feelings!</div>
+                `;
+                reactionContent.classList.add('show');
+            }, 200);
+        }
+
+        function createFloatingEmoji(emoji, button) {
+            const floatingEmoji = document.createElement('div');
+            floatingEmoji.className = 'floating-emoji';
+            floatingEmoji.textContent = emoji;
+            
+            const rect = button.getBoundingClientRect();
+            const randomX = (Math.random() - 0.5) * 100;
+            floatingEmoji.style.left = (rect.left + rect.width / 2 + randomX) + 'px';
+            floatingEmoji.style.top = (rect.top + rect.height / 2) + 'px';
+            
+            document.body.appendChild(floatingEmoji);
+            
+            setTimeout(() => {
+                document.body.removeChild(floatingEmoji);
+            }, 2500);
+        }
+
+        function resetCounters() {
+            counts = { good: 0, normal: 0, sad: 0 };
+            comments = [];
+            document.getElementById('goodCount').textContent = '0';
+            document.getElementById('normalCount').textContent = '0';
+            document.getElementById('sadCount').textContent = '0';
+            
+            const reactionContent = document.getElementById('reactionContent');
+            reactionContent.classList.remove('show');
+            setTimeout(() => {
+                reactionContent.innerHTML = '<div class="reaction-text">Everything reset! How are you feeling now?</div>';
+                reactionContent.classList.add('show');
+            }, 200);
+
+            displayComments();
+        }
+
+        // Initialize display
+        window.addEventListener('load', function() {
+            document.getElementById('reactionContent').classList.add('show');
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(event) {
+            switch(event.key) {
+                case '1':
+                case 'g':
+                    react('😊', 'Feeling Great!', 'good');
+                    break;
+                case '2':
+                case 'n':
+                    react('😐', 'Just Okay', 'normal');
+                    break;
+                case '3':
+                case 's':
+                    react('😢', 'Not So Good', 'sad');
+                    break;
+                case 'r':
+                    resetCounters();
+                    break;
+            }
+        });
+    </script>
+</body>
+</html>
