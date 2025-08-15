@@ -1,0 +1,640 @@
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Peer Posts</title>
+                <style>
+                    * {
+                        margin: 0;
+                        padding: 0;
+                        box-sizing: border-box;
+                    }
+
+                    body {
+                        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        min-height: 100vh;
+                        padding: 20px;
+                    }
+
+                    .container {
+                        max-width: 800px;
+                        margin: 0 auto;
+                    }
+
+                    .header {
+                        background: rgba(255, 255, 255, 0.95);
+                        backdrop-filter: blur(10px);
+                        border-radius: 20px;
+                        padding: 20px;
+                        margin-bottom: 20px;
+                        text-align: center;
+                        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+                    }
+
+                    .header h1 {
+                        color: #4a5568;
+                        margin-bottom: 15px;
+                        font-size: 2.2em;
+                    }
+
+                    .filter-buttons {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        gap: 10px;
+                        flex-wrap: wrap;
+                    }
+
+                    .main-filters {
+                        display: flex;
+                        gap: 10px;
+                        flex-wrap: wrap;
+                    }
+
+                    .my-posts-filter {
+                        margin-left: auto;
+                    }
+
+                    .filter-btn {
+                        background: linear-gradient(45deg, #ff6b6b, #ffa500);
+                        color: white;
+                        border: none;
+                        padding: 12px 24px;
+                        border-radius: 25px;
+                        cursor: pointer;
+                        font-weight: 600;
+                        transition: all 0.3s ease;
+                        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+                    }
+
+                    .filter-btn.active {
+                        background: linear-gradient(45deg, #4ecdc4, #44a08d);
+                    }
+
+                    .post {
+                        background: rgba(255, 255, 255, 0.95);
+                        backdrop-filter: blur(10px);
+                        border-radius: 20px;
+                        padding: 20px;
+                        margin-bottom: 20px;
+                        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                    }
+
+                    .post:hover {
+                        transform: translateY(-5px);
+                        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+                    }
+
+                    .post-header {
+                        display: flex;
+                        align-items: center;
+                        margin-bottom: 15px;
+                    }
+
+                    .profile-pic {
+                        width: 50px;
+                        height: 50px;
+                        border-radius: 50%;
+                        margin-right: 15px;
+                        cursor: pointer;
+                        border: 3px solid #ff6b6b;
+                        transition: all 0.3s ease;
+                    }
+
+                    .user-info {
+                        flex-grow: 1;
+                    }
+
+                    .username {
+                        font-weight: bold;
+                        color: #4a5568;
+                        cursor: pointer;
+                        font-size: 1.1em;
+                    }
+
+                    .timestamp {
+                        color: #718096;
+                        font-size: 0.9em;
+                    }
+
+                    .new-badge {
+                        background: linear-gradient(45deg, #ff6b6b, #ffa500);
+                        color: white;
+                        padding: 4px 12px;
+                        border-radius: 15px;
+                        font-size: 0.8em;
+                        font-weight: bold;
+                        margin-left: 10px;
+                        animation: pulse 2s infinite;
+                    }
+
+                    @keyframes pulse {
+                        0%, 100% { opacity: 1; }
+                        50% { opacity: 0.7; }
+                    }
+
+                    .post-content {
+                        color: #4a5568;
+                        font-size: 1.1em;
+                        line-height: 1.6;
+                        margin-bottom: 15px;
+                        max-height: 100px;
+                        overflow: hidden;
+                    }
+
+                    .post-content.expanded {
+                        max-height: none;
+                    }
+
+                    .reactions {
+                        display: flex;
+                        gap: 15px;
+                        flex-wrap: wrap;
+                    }
+
+                    .reaction-btn {
+                        background: rgba(255, 255, 255, 0.8);
+                        border: 2px solid #e2e8f0;
+                        border-radius: 25px;
+                        padding: 8px 15px;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        gap: 8px;
+                        transition: all 0.3s ease;
+                        font-size: 1em;
+                    }
+
+                    .reaction-btn:hover {
+                        transform: scale(1.1);
+                        border-color: #ff6b6b;
+                        background: rgba(255, 107, 107, 0.1);
+                    }
+
+                    .reaction-btn.active {
+                        background: linear-gradient(45deg, #ff6b6b, #ffa500);
+                        color: white;
+                        border-color: transparent;
+                    }
+
+                    .reaction-count {
+                        font-weight: bold;
+                        min-width: 20px;
+                        text-align: center;
+                    }
+
+                    /* Full Post Modal */
+                    .full-post {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: rgba(0, 0, 0, 0.8);
+                        z-index: 2000;
+                        display: none;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 20px;
+                    }
+
+                    .full-post-content {
+                        background: rgba(255, 255, 255, 0.95);
+                        backdrop-filter: blur(10px);
+                        border-radius: 20px;
+                        padding: 30px;
+                        max-width: 600px;
+                        max-height: 80vh;
+                        overflow-y: auto;
+                        position: relative;
+                    }
+
+                    .close-btn {
+                        position: absolute;
+                        top: 15px;
+                        right: 20px;
+                        background: none;
+                        border: none;
+                        font-size: 2em;
+                        cursor: pointer;
+                        color: #718096;
+                        transition: color 0.3s ease;
+                    }
+
+                    .close-btn:hover {
+                        color: #ff6b6b;
+                    }
+
+                    /* Profile Page */
+                    .profile-page {
+                        display: none;
+                        background: rgba(255, 255, 255, 0.95);
+                        backdrop-filter: blur(10px);
+                        border-radius: 20px;
+                        padding: 30px;
+                        margin-bottom: 20px;
+                        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+                    }
+
+                    .profile-header {
+                        text-align: center;
+                        margin-bottom: 30px;
+                    }
+
+                    .profile-header .profile-pic {
+                        width: 120px;
+                        height: 120px;
+                        margin: 0 auto 20px;
+                        border: 5px solid #ff6b6b;
+                    }
+
+                    .badges {
+                        display: flex;
+                        justify-content: center;
+                        gap: 10px;
+                        margin: 20px 0;
+                        flex-wrap: wrap;
+                    }
+
+                    .badge {
+                        background: linear-gradient(45deg, #4ecdc4, #44a08d);
+                        color: white;
+                        padding: 8px 16px;
+                        border-radius: 20px;
+                        font-size: 0.9em;
+                        font-weight: bold;
+                    }
+
+                    .achievements {
+                        margin: 20px 0;
+                    }
+
+                    .achievements h3 {
+                        color: #4a5568;
+                        margin-bottom: 15px;
+                    }
+
+                    .achievement-list {
+                        display: flex;
+                        gap: 15px;
+                        flex-wrap: wrap;
+                    }
+
+                    .achievement {
+                        background: rgba(255, 107, 107, 0.1);
+                        color: #ff6b6b;
+                        padding: 10px 20px;
+                        border-radius: 15px;
+                        border: 2px solid #ff6b6b;
+                        font-weight: bold;
+                    }
+
+                    .bio {
+                        background: rgba(78, 205, 196, 0.1);
+                        padding: 20px;
+                        border-radius: 15px;
+                        margin: 20px 0;
+                        color: #4a5568;
+                        line-height: 1.6;
+                    }
+
+                    .back-btn {
+                        background: linear-gradient(45deg, #667eea, #764ba2);
+                        color: white;
+                        border: none;
+                        padding: 15px 30px;
+                        border-radius: 25px;
+                        cursor: pointer;
+                        font-weight: bold;
+                        font-size: 1.1em;
+                        transition: all 0.3s ease;
+                    }
+
+                    .back-btn:hover {
+                        transform: translateY(-2px);
+                        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+                    }
+
+                    @media (max-width: 768px) {
+                        .container {
+                            padding: 10px;
+                        }
+                        
+                        .filter-buttons {
+                            flex-direction: column;
+                            align-items: stretch;
+                        }
+                        
+                        .main-filters {
+                            justify-content: center;
+                            margin-bottom: 10px;
+                        }
+                        
+                        .my-posts-filter {
+                            margin-left: 0;
+                            text-align: center;
+                        }
+                        
+                        .filter-btn {
+                            padding: 10px 16px;
+                            font-size: 0.9em;
+                        }
+                        
+                        .reactions {
+                            gap: 10px;
+                        }
+                        
+                        .full-post-content {
+                            margin: 10px;
+                            max-width: calc(100% - 20px);
+                        }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <div class="header">
+                        <h1>🎓 Peer Posts</h1>
+                        <div class="filter-buttons">
+                            <div class="main-filters">
+                                <button class="filter-btn active" data-filter="all">All Posts</button>
+                                <button class="filter-btn" data-filter="friends">Friends</button>
+                                <button class="filter-btn" data-filter="classmates">Classmates</button>
+                            </div>
+                            <div class="my-posts-filter">
+                                <button class="filter-btn" data-filter="me">My Posts</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="feed">
+                        <!-- Posts will be generated here -->
+                    </div>
+
+                    <!-- Full Post Modal -->
+                    <div class="full-post" id="full-post">
+                        <div class="full-post-content">
+                            <button class="close-btn" onclick="closeFullPost()">&times;</button>
+                            <div id="full-post-body"></div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Page -->
+                    <div id="profile-page" class="profile-page">
+                        <div class="profile-header">
+                            <img class="profile-pic" id="profile-pic-large" src="" alt="Profile">
+                            <h2 id="profile-name"></h2>
+                            <div class="badges" id="profile-badges"></div>
+                        </div>
+                        
+                        <div class="achievements">
+                            <h3>🏆 Achievements</h3>
+                            <div class="achievement-list" id="profile-achievements"></div>
+                        </div>
+
+                        <div class="bio" id="profile-bio"></div>
+                        
+                        <button class="back-btn" onclick="showFeed()">← Back to Feed</button>
+                    </div>
+                </div>
+
+                <script>
+                    // Sample data
+                    const posts = [
+                        {
+                            id: 1,
+                            user: "Alex Chen",
+                            userType: "friends",
+                            profilePic: "https://i.pravatar.cc/150?img=1",
+                            timestamp: new Date(Date.now() - 30 * 60 * 1000),
+                            content: "I can't believe I completed **Ray Optics**! 🌟 The interference patterns finally make sense!",
+                            reactions: { "👏": 8, "🎉": 5, "💯": 12 },
+                            userReaction: null,
+                            badges: ["Top Performer", "Physics Wizard"],
+                            achievements: ["Dean's List", "Perfect Attendance", "Lab Champion"],
+                            bio: "Physics major passionate about optics and quantum mechanics. Always ready to help classmates!"
+                        },
+                        {
+                            id: 2,
+                            user: "Sarah Johnson",
+                            userType: "classmates",
+                            profilePic: "https://i.pravatar.cc/150?img=2",
+                            timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
+                            content: "Just finished my chemistry lab report! Who else is struggling with *organic synthesis*? 🧪",
+                            reactions: { "😅": 15, "🤝": 7, "💪": 3 },
+                            userReaction: "🤝",
+                            badges: ["Study Group Leader", "Chem Expert"],
+                            achievements: ["Research Paper Published", "Tutor Certification"],
+                            bio: "Chemistry enthusiast who loves helping others understand complex reactions and mechanisms."
+                        },
+                        {
+                            id: 3,
+                            user: "Mike Thompson",
+                            userType: "me",
+                            profilePic: "https://i.pravatar.cc/150?img=3",
+                            timestamp: new Date(Date.now() - 45 * 60 * 1000),
+                            content: "Study session at the library was **amazing**! Thanks everyone who joined 📚✨",
+                            reactions: { "❤️": 20, "🙌": 8, "📖": 6 },
+                            userReaction: null,
+                            badges: ["Study Organizer", "Peer Mentor"],
+                            achievements: ["Student Leader", "Academic Excellence", "Community Builder"],
+                            bio: "Computer Science student who loves organizing study groups and helping classmates succeed!"
+                        },
+                        {
+                            id: 4,
+                            user: "Emma Wilson",
+                            userType: "friends",
+                            profilePic: "https://i.pravatar.cc/150?img=4",
+                            timestamp: new Date(Date.now() - 5 * 60 * 1000),
+                            content: "Coffee and calculus - the perfect combination! ☕ Ready to tackle these *derivatives* 💪",
+                            reactions: { "☕": 12, "💯": 9, "🔥": 15 },
+                            userReaction: null,
+                            badges: ["Math Tutor", "Coffee Enthusiast"],
+                            achievements: ["Math Competition Winner", "Calculus Master"],
+                            bio: "Mathematics major with a passion for teaching and an unhealthy coffee addiction!"
+                        },
+                        {
+                            id: 5,
+                            user: "David Kim",
+                            userType: "classmates",
+                            profilePic: "https://i.pravatar.cc/150?img=5",
+                            timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000),
+                            content: "Programming assignment complete! 🎯 **JavaScript** is finally clicking for me 💻",
+                            reactions: { "🚀": 18, "👨‍💻": 11, "🎉": 7 },
+                            userReaction: "🚀",
+                            badges: ["Coding Newbie", "Fast Learner"],
+                            achievements: ["First App Built", "Debug Master"],
+                            bio: "Learning to code and loving every minute of it. Always excited to share discoveries!"
+                        }
+                    ];
+
+                    let currentFilter = 'all';
+
+                    function formatTimestamp(date) {
+                        const now = new Date();
+                        const diff = now - date;
+                        const minutes = Math.floor(diff / (1000 * 60));
+                        const hours = Math.floor(diff / (1000 * 60 * 60));
+
+                        if (minutes < 60) {
+                            return minutes + 'm ago';
+                        } else if (hours < 24) {
+                            return hours + 'h ago';
+                        } else {
+                            return date.toLocaleDateString();
+                        }
+                    }
+
+                    function isNewPost(date) {
+                        const now = new Date();
+                        const diff = now - date;
+                        return diff < (60 * 60 * 1000);
+                    }
+
+                    function renderPosts() {
+                        const feed = document.getElementById('feed');
+                        let filteredPosts = posts;
+
+                        if (currentFilter === 'friends') {
+                            filteredPosts = posts.filter(post => post.userType === 'friends');
+                        } else if (currentFilter === 'classmates') {
+                            filteredPosts = posts.filter(post => post.userType === 'classmates');
+                        } else if (currentFilter === 'me') {
+                            filteredPosts = posts.filter(post => post.userType === 'me');
+                        }
+
+                        let html = '';
+                        filteredPosts.forEach(post => {
+                            const reactionsHtml = Object.entries(post.reactions).map(([emoji, count]) => {
+                                const activeClass = post.userReaction === emoji ? 'active' : '';
+                                return '<button class="reaction-btn ' + activeClass + '" onclick="toggleReaction(' + post.id + ', \'' + emoji + '\')">' +
+                                    '<span>' + emoji + '</span>' +
+                                    '<span class="reaction-count">' + count + '</span>' +
+                                    '</button>';
+                            }).join('');
+
+                            const newBadge = isNewPost(post.timestamp) ? '<span class="new-badge">NEW</span>' : '';
+                            const content = post.content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+                            html += '<div class="post" onclick="showFullPost(' + post.id + ')">' +
+                                '<div class="post-header">' +
+                                '<img class="profile-pic" src="' + post.profilePic + '" alt="' + post.user + '" onclick="event.stopPropagation(); showProfile(\'' + post.user + '\')">' +
+                                '<div class="user-info">' +
+                                '<div class="username" onclick="event.stopPropagation(); showProfile(\'' + post.user + '\')">' + post.user + '</div>' +
+                                '<div class="timestamp">' + formatTimestamp(post.timestamp) + '</div>' +
+                                '</div>' +
+                                newBadge +
+                                '</div>' +
+                                '<div class="post-content">' + content + '</div>' +
+                                '<div class="reactions" onclick="event.stopPropagation()">' +
+                                reactionsHtml +
+                                '</div>' +
+                                '</div>';
+                        });
+
+                        feed.innerHTML = html;
+                    }
+
+                    function toggleReaction(postId, emoji) {
+                        const post = posts.find(p => p.id === postId);
+                        
+                        if (post.userReaction && post.reactions[post.userReaction]) {
+                            post.reactions[post.userReaction]--;
+                            if (post.reactions[post.userReaction] === 0) {
+                                delete post.reactions[post.userReaction];
+                            }
+                        }
+
+                        if (post.userReaction === emoji) {
+                            post.userReaction = null;
+                        } else {
+                            post.userReaction = emoji;
+                            post.reactions[emoji] = (post.reactions[emoji] || 0) + 1;
+                        }
+
+                        renderPosts();
+                    }
+
+                    function showFullPost(postId) {
+                        const post = posts.find(p => p.id === postId);
+                        if (!post) return;
+
+                        const reactionsHtml = Object.entries(post.reactions).map(([emoji, count]) => {
+                            const activeClass = post.userReaction === emoji ? 'active' : '';
+                            return '<button class="reaction-btn ' + activeClass + '" onclick="toggleReaction(' + post.id + ', \'' + emoji + '\')">' +
+                                '<span>' + emoji + '</span>' +
+                                '<span class="reaction-count">' + count + '</span>' +
+                                '</button>';
+                        }).join('');
+
+                        const newBadge = isNewPost(post.timestamp) ? '<span class="new-badge">NEW</span>' : '';
+                        const content = post.content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+                        const fullPostBody = document.getElementById('full-post-body');
+                        fullPostBody.innerHTML = '<div class="post-header">' +
+                                '<img class="profile-pic" src="' + post.profilePic + '" alt="' + post.user + '" onclick="closeFullPost(); showProfile(\'' + post.user + '\')">' +
+                                '<div class="user-info">' +
+                                '<div class="username" onclick="closeFullPost(); showProfile(\'' + post.user + '\')">' + post.user + '</div>' +
+                                '<div class="timestamp">' + formatTimestamp(post.timestamp) + '</div>' +
+                                '</div>' +
+                                newBadge +
+                                '</div>' +
+                                '<div class="post-content expanded">' + content + '</div>' +
+                                '<div class="reactions">' +
+                                reactionsHtml +
+                                '</div>';
+                        
+                        document.getElementById('full-post').style.display = 'flex';
+                    }
+
+                    function closeFullPost() {
+                        document.getElementById('full-post').style.display = 'none';
+                    }
+
+                    function showProfile(username) {
+                        const post = posts.find(p => p.user === username);
+                        if (!post) return;
+
+                        document.getElementById('feed').style.display = 'none';
+                        document.querySelector('.header').style.display = 'none';
+                        
+                        const profilePage = document.getElementById('profile-page');
+                        document.getElementById('profile-pic-large').src = post.profilePic;
+                        document.getElementById('profile-name').textContent = post.user;
+                        
+                        const badgesHtml = post.badges.map(badge => '<span class="badge">' + badge + '</span>').join('');
+                        document.getElementById('profile-badges').innerHTML = badgesHtml;
+                        
+                        const achievementsHtml = post.achievements.map(achievement => '<span class="achievement">' + achievement + '</span>').join('');
+                        document.getElementById('profile-achievements').innerHTML = achievementsHtml;
+                        
+                        document.getElementById('profile-bio').textContent = post.bio;
+                        
+                        profilePage.style.display = 'block';
+                    }
+
+                    function showFeed() {
+                        document.getElementById('profile-page').style.display = 'none';
+                        document.getElementById('feed').style.display = 'block';
+                        document.querySelector('.header').style.display = 'block';
+                    }
+
+                    // Filter functionality
+                    document.querySelectorAll('.filter-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                            e.target.classList.add('active');
+                            currentFilter = e.target.dataset.filter;
+                            renderPosts();
+                        });
+                    });
+
+                    // Initial render
+                    renderPosts();
+                </script>
+            </body>
+            </html>
