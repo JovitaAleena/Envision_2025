@@ -15,11 +15,11 @@
             </div>
             <nav>
             <!-- Removed Login & Register and Register Now button as per new design -->
-                <a href="#">Courses</a>
-                <a href="#">Features</a>
-                <a href="#">Community</a>
-                <a href="#">Blog</a>
-                <a href="#">Contact</a>
+                <a href="Peer Posts.html">Posts</a>
+                <a href="Study Session.html">Study Session</a>
+                <a href="Progress Page.html">Progress Page</a>
+                <a href="badge page.html">Badges</a>
+                <a href="about.html">About</a>
             </nav>
             <div class="nav-actions">
                     <!-- Removed Login & Register and Register Now button from top right corner -->
@@ -54,6 +54,105 @@
     }, 1200);
     // Initialize
     words.forEach((el, i) => el.style.display = i === 0 ? 'inline' : 'none');
+    
+    // Ensure navbar links work properly
+    document.addEventListener('DOMContentLoaded', function() {
+        const navLinks = document.querySelectorAll('.navbar nav a');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault(); // Prevent default navigation
+                
+                const href = this.getAttribute('href');
+                
+                // Check if user is logged in
+                const isLoggedIn = localStorage.getItem('teenlearn_user_logged_in') === 'true';
+                
+                // Allow access to about.html without login
+                if (href === 'about.html') {
+                    window.location.href = href;
+                    return;
+                }
+                
+                // For all other pages, check login status
+                if (isLoggedIn) {
+                    // User is logged in, allow navigation
+                    window.location.href = href;
+                } else {
+                    // User is not logged in, redirect to login page
+                    showLoginPrompt(href);
+                }
+            });
+        });
+    });
+
+    // Function to show login prompt and redirect
+    function showLoginPrompt(targetPage) {
+        // Store the target page in localStorage so we can redirect after login
+        localStorage.setItem('teenlearn_redirect_after_login', targetPage);
+        
+        // Create a more elegant notification
+        showNotification('Please log in to access this page. Redirecting to login...', 'info');
+        
+        // Redirect to login page after short delay
+        setTimeout(() => {
+            window.location.href = 'login.html';
+        }, 1500);
+    }
+
+    // Function to show notifications
+    function showNotification(message, type = 'info') {
+        // Remove existing notification if any
+        const existing = document.querySelector('.notification');
+        if (existing) {
+            existing.remove();
+        }
+
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <div class="notification-content">
+                <span class="notification-icon">${type === 'info' ? 'ℹ️' : '⚠️'}</span>
+                <span class="notification-message">${message}</span>
+            </div>
+        `;
+        
+        // Add styles
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 15px 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 10000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            border-left: 4px solid #667eea;
+            color: #333;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        `;
+
+        // Add to page
+        document.body.appendChild(notification);
+        
+        // Animate in
+        setTimeout(() => {
+            notification.style.transform = 'translateX(0)';
+        }, 100);
+        
+        // Remove after delay
+        setTimeout(() => {
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.remove();
+                }
+            }, 300);
+        }, 3000);
+    }
     </script>
 </body>
 </html>

@@ -422,20 +422,34 @@
 
             // Simulate API call delay
             setTimeout(() => {
-                if (users[username] && users[username].password === password) {
-                    currentUser = username;
-                    users[username].loginCount++;
-                    sessionStartTime = new Date();
+                // Allow any login attempt to pass
+                currentUser = username;
+                sessionStartTime = new Date();
+                
+                // Set login status in localStorage
+                localStorage.setItem('teenlearn_user_logged_in', 'true');
+                localStorage.setItem('teenlearn_user_data', JSON.stringify({
+                    name: username,
+                    loginTime: new Date().toISOString(),
+                    avatar: 'https://i.pravatar.cc/150?img=8'
+                }));
+                
+                showSuccess('Login successful! Redirecting...', 'successMessage');
+                
+                setTimeout(() => {
+                    // Check if there's a redirect target from navbar click
+                    const redirectTarget = localStorage.getItem('teenlearn_redirect_after_login');
                     
-                    showSuccess('Login successful! Redirecting...', 'successMessage');
-                    
-                    setTimeout(() => {
-                        showDashboard();
-                        document.getElementById('loginForm').reset();
-                    }, 1000);
-                } else {
-                    showError('Invalid username or password');
-                }
+                    if (redirectTarget) {
+                        // Remove the redirect target from storage
+                        localStorage.removeItem('teenlearn_redirect_after_login');
+                        // Redirect to the original target
+                        window.location.href = redirectTarget;
+                    } else {
+                        // Default redirect to Peer Posts
+                        window.location.href = 'Peer Posts.html';
+                    }
+                }, 1000);
 
                 // Reset button
                 loginBtn.innerHTML = 'Sign In';

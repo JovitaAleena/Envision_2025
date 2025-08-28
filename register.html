@@ -7,9 +7,80 @@
     <link rel="stylesheet" href="login.css">
     <style>
         /* Inline fallback for CSS if login.css is not found */
+        body {
+            padding-top: 90px; /* Space for sticky navbar */
+        }
+
+        /* Sticky Navbar Styles */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            padding: 1rem 0;
+        }
+
+        .navbar-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #a259e4;
+            text-decoration: none;
+        }
+
+        .logo span:last-child {
+            color: #333;
+        }
+
+        .navbar nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .navbar nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            z-index: 1001;
+        }
+
+        .navbar nav a:hover {
+            color: #a259e4;
+        }
     </style>
 </head>
 <body>
+    <!-- Sticky Navbar -->
+    <div class="navbar">
+        <div class="navbar-inner">
+            <a href="index.html" class="logo">
+                <span style="font-size: 1.5em; vertical-align: middle; margin-right: 8px;">🎓</span>Teen <span>Learn</span>
+            </a>
+            <nav>
+                <a href="Peer Posts.html">Posts</a>
+                <a href="Study Session.html">Study Session</a>
+                <a href="Progress Page.html">Progress Page</a>
+                <a href="badge page.html">Badges</a>
+                <a href="about.html">About</a>
+            </nav>
+        </div>
+    </div>
+
     <div class="container">
         <div id="registerSection">
             <div class="header">

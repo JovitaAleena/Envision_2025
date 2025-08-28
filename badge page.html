@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Session Complete - FocusSync</title>
     <nav style="position: fixed; top: 20px; right: 20px; display: flex; gap: 10px;">
-        <a href="all_badges.html" style="background: white; padding: 10px 20px; border-radius: 20px; text-decoration: none; color: #764ba2; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">View All Badges</a>
+        <a href="AllBadge.html" style="background: white; padding: 10px 20px; border-radius: 20px; text-decoration: none; color: #764ba2; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">View All Badges</a>
     </nav>
     <style>
         * {
@@ -24,7 +24,6 @@
             color: #333;
             overflow-x: hidden;
         }
-
         .completion-container {
             background: white;
             border-radius: 30px;
@@ -262,6 +261,19 @@
             color: white;
         }
 
+        .btn-tertiary {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .btn-tertiary:hover {
+            background: linear-gradient(135deg, #ee5a52 0%, #d63031 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(238, 90, 82, 0.3);
+        }
+
         .share-section {
             margin-top: 2rem;
             padding-top: 2rem;
@@ -445,7 +457,8 @@
 
         <div class="action-buttons">
             <button class="btn btn-primary" onclick="startNewSession()">Start New Session</button>
-            <a href="#" class="btn btn-secondary" onclick="viewAllBadges()">View All Badges</a>
+            <a href="AllBadge.html" class="btn btn-secondary">View All Badges</a>
+            <a href="AddPost.html" class="btn btn-tertiary">Add to Post</a>
         </div>
 
         <div class="share-section">
@@ -515,18 +528,26 @@
         }
 
         function startNewSession() {
+            // Get the button element
+            const button = document.querySelector('.btn-primary');
+            
             // Animate button
-            event.target.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                event.target.style.transform = 'scale(1)';
-                // Here you would redirect to the session page
-                alert('Starting new session... (This would redirect to the study session page)');
-            }, 150);
+            if (button) {
+                button.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    button.style.transform = 'scale(1)';
+                    // Redirect to the study session page
+                    window.location.href = 'Study Session.html';
+                }, 150);
+            } else {
+                // Fallback - direct redirect
+                window.location.href = 'Study Session.html';
+            }
         }
 
         function viewAllBadges() {
-            // Here you would redirect to the badges page
-            alert('Redirecting to badges page... (This would show all your badges)');
+            // Redirect to the all badges page
+            window.location.href = 'AllBadge.html';
         }
 
         function shareToTwitter() {

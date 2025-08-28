@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - TeenLearn</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #a259e4;
+            text-decoration: none;
+        }
+
+        .logo span:last-child {
+            color: #333;
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #a259e4;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 120px 2rem 2rem;
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 4rem;
+            color: white;
+        }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-section p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .content-section {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            color: #a259e4;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .feature-card {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .mission-section {
+            text-align: center;
+            padding: 2rem 0;
+            position: relative;
+            overflow: hidden;
+            background: radial-gradient(ellipse at center, #000428 0%, #8e05ef 100%);
+            border-radius: 20px;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mission-section h2 {
+            color: #ffffff;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 10;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .mission-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #ffffff;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Hyperspeed Starfield Animation */
+        .starfield {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: hyperspeed linear infinite;
+        }
+
+        .star.size-small {
+            width: 1px;
+            height: 1px;
+        }
+
+        .star.size-medium {
+            width: 2px;
+            height: 2px;
+            box-shadow: 0 0 2px white;
+        }
+
+        .star.size-large {
+            width: 3px;
+            height: 3px;
+            box-shadow: 0 0 4px white;
+        }
+
+        @keyframes hyperspeed {
+            0% {
+                opacity: 0;
+                transform: translateX(-100px);
+            }
+            10% {
+                opacity: var(--star-opacity, 1);
+            }
+            90% {
+                opacity: var(--star-opacity, 1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(100vw);
+            }
+        }
+
+        .hyperspeed-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            z-index: 5;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.6;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.05);
+            }
+        }
+
+        .team-section {
+            background: linear-gradient(135deg, #a259e4 0%, #667eea 100%);
+            color: white;
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 120px;
+            left: 2rem;
+            background: white;
+            color: #a259e4;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: #a259e4;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 100px 1rem 2rem;
+            }
+            
+            .content-section {
+                padding: 2rem 1.5rem;
+            }
+            
+            .back-btn {
+                position: static;
+                display: inline-block;
+                margin: 1rem auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <div class="navbar">
+        <div class="navbar-inner">
+            <a href="index.html" class="logo">
+                <span style="font-size: 1.5em; vertical-align: middle; margin-right: 8px;">🎓</span>Teen <span>Learn</span>
+            </a>
+            <nav>
+                <a href="Peer Posts.html">Posts</a>
+                <a href="Study Session.html">Study Session</a>
+                <a href="Progress Page.html">Progress Page</a>
+                <a href="badge page.html">Badges</a>
+                <a href="about.html">About</a>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Back Button -->
+    <a href="index.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Home
+    </a>
+
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <h1>About 🎓 TeenLearn</h1>
+            <p>Empowering young minds through innovative learning experiences and peer collaboration</p>
+        </div>
+
+        <!-- Mission Section -->
+        <div class="content-section">
+            <div class="mission-section">
+                <div class="starfield" id="starfield"></div>
+                <div class="hyperspeed-text">Hyperspeed Mode</div>
+                <h2 class="section-title">Our Mission</h2>
+                <p class="mission-text">
+                    At TeenLearn, we believe that every teenager has the potential to achieve greatness. Our platform is designed to make learning engaging, interactive, and accessible for young minds aged 13-19. We combine cutting-edge technology with proven educational methodologies to create an environment where students can thrive, collaborate, and discover their passions.
+                </p>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <div class="content-section">
+            <h2 class="section-title">What We Offer</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3>Interactive Study Sessions</h3>
+                    <p>Personalized study sessions with mood-based recommendations and smart timer features to optimize learning efficiency.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Progress Tracking</h3>
+                    <p>Comprehensive progress dashboard with detailed analytics, study streaks, and achievement badges to motivate continuous learning.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3>Peer Collaboration</h3>
+                    <p>Connect with fellow learners, share study posts, ask questions, and build a supportive learning community.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🏆</div>
+                    <h3>Achievement System</h3>
+                    <p>Earn badges and rewards for reaching milestones, maintaining study streaks, and helping other students in the community.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="team-section">
+            <h2>TeenLearn by the Numbers</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">10K+</div>
+                    <div class="stat-label">Active Students</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Study Groups</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">1M+</div>
+                    <div class="stat-label">Study Hours Logged</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">95%</div>
+                    <div class="stat-label">Student Satisfaction</div>
+                </div>
+            </div>
+            <p style="margin-top: 2rem; opacity: 0.9; font-size: 1.1rem;">
+                Join thousands of students who are already transforming their learning experience with TeenLearn!
+            </p>
+        </div>
+
+        <!-- Values Section -->
+        <div class="content-section">
+            <h2 class="section-title">Our Core Values</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">💡</div>
+                    <h3>Innovation</h3>
+                    <p>We continuously evolve our platform with the latest educational technologies and methodologies.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤝</div>
+                    <h3>Community</h3>
+                    <p>Learning is better together. We foster a supportive environment where students help each other succeed.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Creativity</h3>
+                    <p>We encourage creative thinking and provide tools for students to express their ideas and solutions.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌟</div>
+                    <h3>Excellence</h3>
+                    <p>We strive for excellence in everything we do, from our platform design to student support services.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add smooth scrolling for better user experience
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Add fade-in animation for content sections
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.content-section, .feature-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // Hyperspeed Starfield Animation
+        function createStarfield() {
+            const starfield = document.getElementById('starfield');
+            const numStars = 200;
+            
+            // Clear existing stars
+            starfield.innerHTML = '';
+            
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // Random size
+                const sizes = ['size-small', 'size-medium', 'size-large'];
+                const sizeWeights = [0.7, 0.2, 0.1]; // 70% small, 20% medium, 10% large
+                let randomSize = Math.random();
+                let selectedSize;
+                
+                if (randomSize < sizeWeights[0]) {
+                    selectedSize = sizes[0];
+                } else if (randomSize < sizeWeights[0] + sizeWeights[1]) {
+                    selectedSize = sizes[1];
+                } else {
+                    selectedSize = sizes[2];
+                }
+                
+                star.classList.add(selectedSize);
+                
+                // Random position
+                const startY = Math.random() * 100;
+                const startX = -10 - Math.random() * 50; // Start from left side
+                
+                star.style.top = startY + '%';
+                star.style.left = startX + 'px';
+                
+                // Random animation duration for variety
+                const duration = 1.5 + Math.random() * 3; // 1.5s to 4.5s
+                star.style.animationDuration = duration + 's';
+                
+                // Random delay for staggered effect
+                const delay = Math.random() * 2;
+                star.style.animationDelay = delay + 's';
+                
+                // Random opacity for depth effect
+                const opacity = 0.3 + Math.random() * 0.7;
+                star.style.setProperty('--star-opacity', opacity);
+                
+                starfield.appendChild(star);
+            }
+        }
+        
+        // Initialize starfield when page loads
+        createStarfield();
+        
+        // Recreate stars periodically to maintain continuous effect
+        setInterval(createStarfield, 3000);
+    </script>
+</body>
+</html>

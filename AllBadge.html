@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Badges - TeenLearn</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Navigation Bar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 1000;
+            padding: 0;
+        }
+
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            color: #f0f0f0;
+        }
+
+        .navbar-nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        /* User Profile Dropdown Styles */
+        .user-profile {
+            position: relative;
+            display: none;
+        }
+
+        .user-profile.logged-in {
+            display: block;
+        }
+
+        .profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .profile-trigger:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .profile-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            object-fit: cover;
+        }
+
+        .profile-name {
+            color: #fff;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .dropdown-arrow {
+            color: #fff;
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+        }
+
+        .user-profile.open .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1001;
+            margin-top: 0.5rem;
+        }
+
+        .profile-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        .dropdown-icon {
+            font-size: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #a8e6cf 0%, #88d8a3 100%);
+            min-height: 100vh;
+            padding-top: 100px;
+            padding: 100px 20px 40px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .progress-overview {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .badge-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .badge-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .badge-card.locked {
+            opacity: 0.6;
+            background: rgba(200, 200, 200, 0.3);
+        }
+
+        .badge-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1.5rem;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .badge-icon::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s;
+            opacity: 0;
+        }
+
+        .badge-card:hover .badge-icon::before {
+            opacity: 1;
+            animation: shine 0.6s ease-in-out;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        /* Badge Colors */
+        .badge-orange { background: linear-gradient(135deg, #ff9500 0%, #ffb84d 100%); }
+        .badge-green { background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%); }
+        .badge-purple { background: linear-gradient(135deg, #9c27b0 0%, #ba68c8 100%); }
+        .badge-blue { background: linear-gradient(135deg, #2196f3 0%, #64b5f6 100%); }
+        .badge-red { background: linear-gradient(135deg, #f44336 0%, #ef5350 100%); }
+        .badge-yellow { background: linear-gradient(135deg, #ffc107 0%, #ffca28 100%); }
+        .badge-teal { background: linear-gradient(135deg, #009688 0%, #26a69a 100%); }
+        .badge-gray { background: linear-gradient(135deg, #757575 0%, #9e9e9e 100%); }
+
+        .badge-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge-level {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .badge-description {
+            font-size: 0.9rem;
+            color: #777;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+        }
+
+        .badge-progress {
+            background: #f0f0f0;
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #4caf50, #66bb6a);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 0.8rem;
+            color: #666;
+            text-align: center;
+        }
+
+        .locked-icon {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            color: #999;
+        }
+
+        .category-section {
+            margin-bottom: 3rem;
+        }
+
+        .category-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .category-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, #4caf50, #66bb6a);
+            border-radius: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .badges-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .progress-stats {
+                gap: 2rem;
+            }
+
+            .page-title {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-brand">TeenLearn</a>
+            <div class="navbar-nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="Peer Posts.html" class="nav-link">Peer Posts</a>
+                <a href="Study Session.html" class="nav-link">Study Session</a>
+                <a href="Progress Page.html" class="nav-link">Progress</a>
+                <a href="badge page.html" class="nav-link">Badges</a>
+                <a href="AllBadge.html" class="nav-link active">All Badges</a>
+                <a href="about.html" class="nav-link">About</a>
+            </div>
+            
+            <!-- User Profile Dropdown -->
+            <div class="user-profile logged-in" id="userProfile">
+                <div class="profile-trigger" onclick="toggleProfileDropdown()">
+                    <img src="https://i.pravatar.cc/150?img=8" alt="Profile" class="profile-avatar">
+                    <span class="profile-name">Sarah</span>
+                    <span class="dropdown-arrow">▼</span>
+                </div>
+                <div class="profile-dropdown" id="profileDropdown">
+                    <a href="#" class="dropdown-item">
+                        <span class="dropdown-icon">👤</span>
+                        Account
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <span class="dropdown-icon">⚙️</span>
+                        Settings
+                    </a>
+                    <a href="index.html" class="dropdown-item" onclick="logout()">
+                        <span class="dropdown-icon">🚪</span>
+                        Log Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">🏆 All Badges</h1>
+            <p class="page-subtitle">Track your learning achievements and unlock new badges!</p>
+        </div>
+
+        <!-- Progress Overview -->
+        <div class="progress-overview">
+            <div class="progress-stats">
+                <div class="stat-item">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">Badges Earned</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">18</div>
+                    <div class="stat-label">Total Badges</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">67%</div>
+                    <div class="stat-label">Completion Rate</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Financial Literacy Badges -->
+        <div class="category-section">
+            <h2 class="category-title">💰 Financial Literacy</h2>
+            <div class="badges-grid">
+                <div class="badge-card">
+                    <div class="badge-icon badge-orange">🐷</div>
+                    <h3 class="badge-title">Budget Boss</h3>
+                    <div class="badge-level">Level 3</div>
+                    <p class="badge-description">Master of personal budgeting and expense tracking. You've successfully managed your money for 3 months!</p>
+                    <div class="badge-progress">
+                        <div class="progress-fill" style="width: 100%;"></div>
+                    </div>
+                    <div class="progress-text">Completed!</div>
+                </div>
+
+                <div class="badge-card">
+                    <div class="badge-icon badge-green">📈</div>
+                    <h3 class="badge-title">Investor 101</h3>
+                    <div class="badge-level">Level 1</div>
+                    <p class="badge-description">Started your investment journey by learning the basics of stocks and bonds.</p>
+                    <div class="badge-progress">
+                        <div class="progress-fill" style="width: 100%;"></div>
+                    </div>
+                    <div class="progress-text">Completed!</div>
+                </div>
+
+                <div class="badge-card">
+                    <div class="badge-icon badge-purple">💵</div>
+                    <h3 class="badge-title">Cash King</h3>
+                    <div class="badge-level">Level 3</div>
+                    <p class="badge-description">Excellent at managing cash flow and emergency savings. Your financial future is secure!</p>
+                    <div class="badge-progress">
+                        <div class="progress-fill" style="width: 100%;"></div>
+                    </div>
+                    <div class="progress-text">Completed!</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Study Habits Badges -->
+        <div class="category-section">
+            <h2 class="category-title">📚 Study Habits</h2>
+            <div class="badges-grid">
+                <div class="badge-card">
+                    <div class="badge-icon badge-green">🔄</div>
+                    <h3 class="badge-title">Recurring</h3>
+                    <div class="badge-level">Level 1</div>
+                    <p class="badge-description">Built a consistent study routine by completing 7 days of continuous learning.</p>
+                    <div class="badge-progress">
+                        <div class="progress-fill" style="width: 100%;"></div>
+                    </div>
+                    <div class="progress-text">Completed!</div>
+                </div>
+
+                <div class="badge-card">
+                    <div class="badge-icon badge-green">🔗</div>
+                    <h3 class="badge-title">Stretcher</h3>
+                    <div class="badge-level">Level 1</div>
+                    <p class="badge-description">Extended your study sessions and pushed beyond your comfort zone.</p>
+                    <div class="badge-progress">
+                        <div class="progress-fill" style="width: 100%;"></div>
+                    </div>
+                    <div class="progress-text">Completed!</div>
+                </div>
+
+                <div class="badge-card locked">
+                    <div class="locked-icon">🔒</div>
+                    <div class="badge-icon badge-gray">💳</div>
+                    <h3 class="badge-title">Debt Crusher</h3>
+                    <div class="badge-level">Locked</div>
+                    <p class="badge-description">Learn advanced debt management strategies and create a debt-free plan.</p>
+                    <div class="badge-progress">
+                        <div class="progress-fill" style="width: 45%;"></div>
+                    </div>
+                    <div class="progress-text">45% Complete</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Advanced Badges -->
+        <div class="category-section">
+            <h2 class="category-title">🎯 Advanced Achievements</h2>
+            <div class="badges-grid">
+                <div class="badge-card">
+                    <div class="badge-icon badge-green">🐷</div>
+                    <h3 class="badge-title">Budget Boss</h3>
+                    <div class="badge-level">Level 1</div>
+                    <p class="badge-description">Started your budgeting journey with basic expense tracking and financial awareness.</p>
+                    <div class="badge-progress">
+                        <div class="progress-fill" style="width: 100%;"></div>
+                    </div>
+                    <div class="progress-text">Completed!</div>
+                </div>
+
+                <div class="badge-card">
+                    <div class="badge-icon badge-yellow">⚡</div>
+                    <h3 class="badge-title">Bill Tamer</h3>
+                    <div class="badge-level">Level 2</div>
+                    <p class="badge-description">Successfully organized and automated your bill payments for better financial control.</p>
+                    <div class="badge-progress">
+                        <div class="progress-fill" style="width: 100%;"></div>
+                    </div>
+                    <div class="progress-text">Completed!</div>
+                </div>
+
+                <div class="badge-card">
+                    <div class="badge-icon badge-purple">📊</div>
+                    <h3 class="badge-title">Finance Guru</h3>
+                    <div class="badge-level">Level 3</div>
+                    <p class="badge-description">Achieved mastery in financial planning, investment strategies, and wealth building.</p>
+                    <div class="badge-progress">
+                        <div class="progress-fill" style="width: 100%;"></div>
+                    </div>
+                    <div class="progress-text">Completed!</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Achievement Progress Badges -->
+        <div class="category-section">
+            <h2 class="category-title">🚀 In Progress</h2>
+            <div class="badges-grid">
+                <div class="badge-card locked">
+                    <div class="locked-icon">🔒</div>
+                    <div class="badge-icon badge-gray">📱</div>
+                    <h3 class="badge-title">Tech Savvy</h3>
+                    <div class="badge-level">Locked</div>
+                    <p class="badge-description">Master digital financial tools and apps for modern money management.</p>
+                    <div class="badge-progress">
+                        <div class="progress-fill" style="width: 20%;"></div>
+                    </div>
+                    <div class="progress-text">20% Complete</div>
+                </div>
+
+                <div class="badge-card locked">
+                    <div class="locked-icon">🔒</div>
+                    <div class="badge-icon badge-gray">🎓</div>
+                    <h3 class="badge-title">Scholar</h3>
+                    <div class="badge-level">Locked</div>
+                    <p class="badge-description">Complete 50 study sessions with consistent high performance ratings.</p>
+                    <div class="badge-progress">
+                        <div class="progress-fill" style="width: 65%;"></div>
+                    </div>
+                    <div class="progress-text">32/50 Sessions</div>
+                </div>
+
+                <div class="badge-card locked">
+                    <div class="locked-icon">🔒</div>
+                    <div class="badge-icon badge-gray">🌟</div>
+                    <h3 class="badge-title">Excellence</h3>
+                    <div class="badge-level">Locked</div>
+                    <p class="badge-description">Achieve perfect scores on 10 consecutive assessments.</p>
+                    <div class="badge-progress">
+                        <div class="progress-fill" style="width: 10%;"></div>
+                    </div>
+                    <div class="progress-text">1/10 Perfect Scores</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add hover effects and animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const badgeCards = document.querySelectorAll('.badge-card');
+            
+            badgeCards.forEach((card, index) => {
+                // Stagger animation entrance
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.style.animation = 'fadeInUp 0.6s ease-out forwards';
+                
+                // Add click effect for earned badges
+                if (!card.classList.contains('locked')) {
+                    card.addEventListener('click', function() {
+                        this.style.transform = 'scale(0.95)';
+                        setTimeout(() => {
+                            this.style.transform = '';
+                        }, 150);
+                    });
+                }
+            });
+        });
+
+        // Add CSS animation keyframes via JavaScript
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Profile Dropdown Functions
+        function toggleProfileDropdown() {
+            const userProfile = document.getElementById('userProfile');
+            const dropdown = document.getElementById('profileDropdown');
+            
+            userProfile.classList.toggle('open');
+            dropdown.classList.toggle('show');
+        }
+
+        function logout() {
+            localStorage.removeItem('teenlearn_user_logged_in');
+            localStorage.removeItem('teenlearn_user_data');
+            
+            const userProfile = document.getElementById('userProfile');
+            if (userProfile) {
+                userProfile.classList.remove('logged-in');
+            }
+            
+            window.location.href = 'index.html';
+        }
+
+        function checkLoginStatus() {
+            const isLoggedIn = localStorage.getItem('teenlearn_user_logged_in') === 'true';
+            const userProfile = document.getElementById('userProfile');
+            
+            if (userProfile) {
+                if (isLoggedIn) {
+                    userProfile.classList.add('logged-in');
+                    
+                    const userData = JSON.parse(localStorage.getItem('teenlearn_user_data') || '{}');
+                    const profileName = document.querySelector('.profile-name');
+                    if (profileName && userData.name) {
+                        profileName.textContent = userData.name;
+                    }
+                } else {
+                    userProfile.classList.remove('logged-in');
+                }
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const userProfile = document.getElementById('userProfile');
+            const dropdown = document.getElementById('profileDropdown');
+            
+            if (userProfile && !userProfile.contains(event.target)) {
+                userProfile.classList.remove('open');
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // Initialize login status on page load
+        checkLoginStatus();
+    </script>
+</body>
+</html>

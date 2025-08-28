@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Post - TeenLearn</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Navigation Bar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 1000;
+            padding: 0;
+        }
+
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            color: #f0f0f0;
+        }
+
+        .navbar-nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding-top: 100px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2rem;
+        }
+
+        .post-form-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .achievement-section {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .achievement-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2d3436;
+            margin-bottom: 1rem;
+        }
+
+        .achievement-badges {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .achievement-badge {
+            background: white;
+            border-radius: 10px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            color: #2d3436;
+            font-weight: bold;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-upload-section {
+            border: 2px dashed #667eea;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            background: #f8f9ff;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .image-upload-section:hover {
+            border-color: #5a67d8;
+            background: #f0f4ff;
+        }
+
+        .image-upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .image-upload-text {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 3rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .privacy-options {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .privacy-option {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .privacy-option.selected {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .privacy-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .success-message {
+            display: none;
+            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .form-buttons {
+                flex-direction: column;
+            }
+            
+            .privacy-options {
+                flex-direction: column;
+            }
+
+            .page-title {
+                font-size: 2.5rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .post-form-container {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-brand">🎓 TeenLearn</a>
+            <div class="navbar-nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="Peer Posts.html" class="nav-link">Peer Posts</a>
+                <a href="Study Session.html" class="nav-link">Study Session</a>
+                <a href="Progress Page.html" class="nav-link">Progress</a>
+                <a href="badge page.html" class="nav-link">Badges</a>
+                <a href="AllBadge.html" class="nav-link">All Badges</a>
+                <a href="about.html" class="nav-link">About</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">📝 Share Your Achievement</h1>
+            <p class="page-subtitle">Create a post to share your study success with the TeenLearn community!</p>
+        </div>
+
+        <!-- Success Message -->
+        <div class="success-message" id="successMessage">
+            🎉 Your post has been published successfully! It will appear in the Peer Posts feed.
+        </div>
+
+        <!-- Post Form -->
+        <div class="post-form-container">
+            <!-- Current Achievement Display -->
+            <div class="achievement-section">
+                <h3 class="achievement-title">🏆 Your Recent Achievement</h3>
+                <div class="achievement-badges">
+                    <span class="achievement-badge">Focus Master</span>
+                    <span class="achievement-badge">Speed Learner</span>
+                </div>
+                <p>25 minutes focused • 0 distractions • 8 day streak</p>
+            </div>
+
+            <form id="postForm">
+                <!-- Post Title -->
+                <div class="form-group">
+                    <label for="postTitle" class="form-label">Post Title</label>
+                    <input 
+                        type="text" 
+                        id="postTitle" 
+                        class="form-input" 
+                        placeholder="Share what you accomplished today..."
+                        maxlength="100"
+                        required
+                    >
+                </div>
+
+                <!-- Post Content -->
+                <div class="form-group">
+                    <label for="postContent" class="form-label">Tell Your Story</label>
+                    <textarea 
+                        id="postContent" 
+                        class="form-textarea" 
+                        placeholder="Describe your study session, what you learned, challenges you overcame, or tips you'd like to share with others..."
+                        maxlength="500"
+                        required
+                    ></textarea>
+                </div>
+
+                <!-- Subject/Category -->
+                <div class="form-group">
+                    <label for="postCategory" class="form-label">Subject Category</label>
+                    <select id="postCategory" class="form-select" required>
+                        <option value="">Select a subject</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="Science">Science</option>
+                        <option value="English">English</option>
+                        <option value="History">History</option>
+                        <option value="Foreign Language">Foreign Language</option>
+                        <option value="Programming">Programming</option>
+                        <option value="Art & Design">Art & Design</option>
+                        <option value="Music">Music</option>
+                        <option value="General Study">General Study</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <!-- Study Tips -->
+                <div class="form-group">
+                    <label for="studyTips" class="form-label">Study Tips (Optional)</label>
+                    <textarea 
+                        id="studyTips" 
+                        class="form-textarea" 
+                        placeholder="Share any study techniques, tools, or strategies that helped you succeed..."
+                        maxlength="300"
+                    ></textarea>
+                </div>
+
+                <!-- Privacy Settings -->
+                <div class="form-group">
+                    <label class="form-label">Post Visibility</label>
+                    <div class="privacy-options">
+                        <div class="privacy-option selected" data-privacy="public">
+                            <div class="privacy-icon">🌍</div>
+                            <div>Public</div>
+                            <small>Visible to all users</small>
+                        </div>
+                        <div class="privacy-option" data-privacy="friends">
+                            <div class="privacy-icon">👥</div>
+                            <div>Friends Only</div>
+                            <small>Visible to your study partners</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image Upload (Optional) -->
+                <div class="form-group">
+                    <label class="form-label">Add Image (Optional)</label>
+                    <div class="image-upload-section" onclick="document.getElementById('imageInput').click()">
+                        <div class="image-upload-icon">📸</div>
+                        <div class="image-upload-text">Click to add a photo of your workspace, notes, or achievement</div>
+                        <input type="file" id="imageInput" style="display: none;" accept="image/*">
+                    </div>
+                </div>
+
+                <!-- Form Buttons -->
+                <div class="form-buttons">
+                    <button type="submit" class="btn btn-primary">Publish Post</button>
+                    <a href="Peer Posts.html" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Privacy option selection
+        document.querySelectorAll('.privacy-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.privacy-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        // Image upload preview
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const uploadSection = document.querySelector('.image-upload-section');
+                uploadSection.innerHTML = `
+                    <div class="image-upload-icon">✅</div>
+                    <div class="image-upload-text">Image selected: ${file.name}</div>
+                `;
+                uploadSection.style.background = '#e8f5e8';
+                uploadSection.style.borderColor = '#28a745';
+            }
+        });
+
+        // Form submission
+        document.getElementById('postForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = {
+                title: document.getElementById('postTitle').value,
+                content: document.getElementById('postContent').value,
+                category: document.getElementById('postCategory').value,
+                tips: document.getElementById('studyTips').value,
+                privacy: document.querySelector('.privacy-option.selected').dataset.privacy,
+                timestamp: new Date().toISOString(),
+                author: 'Sarah', // This would come from user session
+                badges: ['Focus Master', 'Speed Learner'],
+                stats: {
+                    duration: '25 minutes',
+                    distractions: 0,
+                    streak: 8
+                }
+            };
+
+            // Save to localStorage (in a real app, this would be sent to a server)
+            let posts = JSON.parse(localStorage.getItem('teenlearn_posts') || '[]');
+            posts.unshift(formData); // Add to beginning of array
+            localStorage.setItem('teenlearn_posts', JSON.stringify(posts));
+
+            // Show success message
+            document.getElementById('successMessage').style.display = 'block';
+            document.querySelector('.post-form-container').style.opacity = '0.7';
+
+            // Redirect after short delay
+            setTimeout(() => {
+                window.location.href = 'Peer Posts.html';
+            }, 2000);
+        });
+
+        // Character count for text areas
+        function addCharacterCount(textAreaId, maxLength) {
+            const textarea = document.getElementById(textAreaId);
+            const counter = document.createElement('div');
+            counter.style.textAlign = 'right';
+            counter.style.fontSize = '0.8rem';
+            counter.style.color = '#666';
+            counter.style.marginTop = '0.5rem';
+            textarea.parentNode.appendChild(counter);
+
+            function updateCount() {
+                const remaining = maxLength - textarea.value.length;
+                counter.textContent = `${remaining} characters remaining`;
+                counter.style.color = remaining < 50 ? '#e74c3c' : '#666';
+            }
+
+            textarea.addEventListener('input', updateCount);
+            updateCount();
+        }
+
+        // Add character counters
+        addCharacterCount('postTitle', 100);
+        addCharacterCount('postContent', 500);
+        addCharacterCount('studyTips', 300);
+
+        // Auto-populate title with achievement
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('postTitle').value = "Just completed a focused 25-minute study session! 🎯";
+        });
+    </script>
+</body>
+</html>

@@ -11,6 +11,159 @@
             box-sizing: border-box;
         }
 
+        /* Navigation Bar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            z-index: 1000;
+            padding: 0;
+        }
+
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-brand:hover {
+            color: #f0f0f0;
+        }
+
+        .navbar-nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        /* User Profile Dropdown Styles */
+        .user-profile {
+            position: relative;
+            display: none; /* Hidden by default, shown after login */
+        }
+
+        .user-profile.logged-in {
+            display: block;
+        }
+
+        .profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .profile-trigger:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .profile-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            object-fit: cover;
+        }
+
+        .profile-name {
+            color: #fff;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .dropdown-arrow {
+            color: #fff;
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
+        }
+
+        .user-profile.open .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            min-width: 200px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1001;
+            margin-top: 0.5rem;
+        }
+
+        .profile-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: #333;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        .dropdown-icon {
+            font-size: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
         body {
             font-family: Arial, sans-serif;
             display: flex;
@@ -18,6 +171,7 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
+            padding-top: 100px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #333;
         }
@@ -310,9 +464,184 @@
                 flex-direction: column;
             }
         }
+
+        /* Popup Modal Styles */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .popup-overlay.show {
+            opacity: 1;
+        }
+
+        .popup-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: slideInUp 0.4s ease-out;
+        }
+
+        .popup-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: bounce 0.6s ease-out;
+        }
+
+        .popup-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #4a5568;
+            margin-bottom: 1rem;
+        }
+
+        .popup-message {
+            font-size: 1.1rem;
+            color: #718096;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .popup-date {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 15px;
+            font-weight: 600;
+            margin: 1rem 0;
+            display: inline-block;
+        }
+
+        .popup-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .popup-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .popup-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #a0aec0;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .popup-close:hover {
+            color: #4a5568;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-brand">🎓 TeenLearn</a>
+            <div class="navbar-nav">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="Peer Posts.html" class="nav-link">Peer Posts</a>
+                <a href="Study Session.html" class="nav-link active">Study Session</a>
+                <a href="Progress Page.html" class="nav-link">Progress</a>
+                <a href="badge page.html" class="nav-link">Badges</a>
+                <a href="about.html" class="nav-link">About</a>
+            </div>
+            
+            <!-- User Profile Dropdown -->
+            <div class="user-profile logged-in" id="userProfile">
+                <div class="profile-trigger" onclick="toggleProfileDropdown()">
+                    <img src="https://i.pravatar.cc/150?img=8" alt="Profile" class="profile-avatar">
+                    <span class="profile-name">Sarah</span>
+                    <span class="dropdown-arrow">▼</span>
+                </div>
+                <div class="profile-dropdown" id="profileDropdown">
+                    <a href="#" class="dropdown-item">
+                        <span class="dropdown-icon">👤</span>
+                        Account
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <span class="dropdown-icon">⚙️</span>
+                        Settings
+                    </a>
+                    <a href="index.html" class="dropdown-item" onclick="logout()">
+                        <span class="dropdown-icon">🚪</span>
+                        Log Out
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Reminder Popup Modal -->
+    <div class="popup-overlay" id="reminderPopup">
+        <div class="popup-content">
+            <button class="popup-close" onclick="closeReminderPopup()">&times;</button>
+            <div class="popup-icon">📅</div>
+            <h2 class="popup-title">Task Added to Reminders!</h2>
+            <p class="popup-message">Your task has been successfully scheduled and will appear in your reminders.</p>
+            <div class="popup-date" id="popupDueDate"></div>
+            <button class="popup-button" onclick="closeReminderPopup()">Got it!</button>
+        </div>
+    </div>
+
     <div class="container">
         <div id="mainScreen">
             <h1>Study Session</h1>
@@ -597,6 +926,15 @@
             // Save task to storage immediately as pending
             saveTaskToStorage(currentTask);
 
+            // Check if due date is not today
+            const today = new Date().toISOString().split('T')[0];
+            if (taskDueDate && taskDueDate !== today) {
+                // Show popup message for tasks added to reminders
+                showReminderPopup(taskDueDate);
+                return; // Stay on task creation screen
+            }
+
+            // If due date is today or not set, proceed to timer
             targetTime = totalMinutes * 60;
             timeLeft = targetTime;
 
@@ -833,6 +1171,114 @@
         document.addEventListener('DOMContentLoaded', function() {
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('taskDueDate').value = today;
+        });
+
+        // Popup functions for task reminders
+        function showReminderPopup(dueDate) {
+            const popup = document.getElementById('reminderPopup');
+            const dueDateElement = document.getElementById('popupDueDate');
+            
+            // Format the due date nicely
+            const date = new Date(dueDate);
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            dueDateElement.textContent = `Due: ${date.toLocaleDateString('en-US', options)}`;
+            
+            // Show the popup with animation
+            popup.style.display = 'flex';
+            setTimeout(() => {
+                popup.classList.add('show');
+            }, 10);
+        }
+
+        function closeReminderPopup() {
+            const popup = document.getElementById('reminderPopup');
+            popup.classList.remove('show');
+            
+            setTimeout(() => {
+                popup.style.display = 'none';
+                // Clear the form after closing popup
+                document.getElementById('taskName').value = '';
+                document.getElementById('taskSubject').value = '';
+                document.getElementById('taskHours').value = '0';
+                document.getElementById('taskMinutes').value = '25';
+                document.getElementById('taskPriority').value = 'medium';
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('taskDueDate').value = today;
+            }, 300);
+        }
+
+        // Close popup when clicking outside of it
+        document.addEventListener('click', function(event) {
+            const popup = document.getElementById('reminderPopup');
+            if (event.target === popup) {
+                closeReminderPopup();
+            }
+        });
+
+        // Profile Dropdown Functions
+        function toggleProfileDropdown() {
+            const userProfile = document.getElementById('userProfile');
+            const dropdown = document.getElementById('profileDropdown');
+            
+            userProfile.classList.toggle('open');
+            dropdown.classList.toggle('show');
+        }
+
+        function logout() {
+            // Clear any stored login data
+            localStorage.removeItem('teenlearn_user_logged_in');
+            localStorage.removeItem('teenlearn_user_data');
+            
+            // Hide profile dropdown on all pages
+            const userProfile = document.getElementById('userProfile');
+            if (userProfile) {
+                userProfile.classList.remove('logged-in');
+            }
+            
+            // Redirect to home page
+            window.location.href = 'index.html';
+        }
+
+        // Check login status and show/hide profile dropdown
+        function checkLoginStatus() {
+            const isLoggedIn = localStorage.getItem('teenlearn_user_logged_in') === 'true';
+            const userProfile = document.getElementById('userProfile');
+            
+            if (userProfile) {
+                if (isLoggedIn) {
+                    userProfile.classList.add('logged-in');
+                    
+                    // Load user data if available
+                    const userData = JSON.parse(localStorage.getItem('teenlearn_user_data') || '{}');
+                    const profileName = document.querySelector('.profile-name');
+                    if (profileName && userData.name) {
+                        profileName.textContent = userData.name;
+                    }
+                } else {
+                    userProfile.classList.remove('logged-in');
+                }
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const userProfile = document.getElementById('userProfile');
+            const dropdown = document.getElementById('profileDropdown');
+            
+            if (userProfile && !userProfile.contains(event.target)) {
+                userProfile.classList.remove('open');
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // Initialize login status on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLoginStatus();
         });
         
     </script>
