@@ -254,30 +254,26 @@ body {
     color: #b23be7;
     border: 2px solid #b23be7;
 }
-.btn-home-login:hover {
-    background: #f3e6fa;
-    color: #a020f0;
-}
+.btn-home-login,
 .btn-home-register {
-    background: #d25be7;
+    background: #a259e4;
     color: #fff;
-    border: 2px solid #d25be7;
+    border: 2px solid #a259e4;
+    border-radius: 10px;
+    font-size: 1.5rem;
+    font-weight: 600;
+    padding: 0.7em 2.5em;
+    margin-right: 1.5em;
+    transition: background 0.2s, color 0.2s;
+    box-shadow: 0 2px 8px rgba(162, 89, 228, 0.08);
 }
+.btn-home-login:last-child,
+.btn-home-register:last-child {
+    margin-right: 0;
+}
+.btn-home-login:hover,
 .btn-home-register:hover {
-    background: #b23be7;
-    color: #fff;
-}
-@media (max-width: 1200px) {
-    .navbar-inner { width: 98vw; }
-    .hero-content { margin-right: 0; }
-}
-@media (max-width: 900px) {
-    .navbar-inner { flex-direction: column; align-items: flex-start; height: auto; }
-    .hero { flex-direction: column; align-items: center; }
-    .hero-content { margin: 30px 0; padding: 30px 10vw; }
+    background: #fff;
+    color: #a259e4;
 }
 @media (max-width: 700px) {
-    .navbar-inner { width: 100vw; padding: 0 4px; }
-    .hero-content h1 { font-size: 1.3rem; }
-    .hero-content { padding: 20px 4vw; }
-}

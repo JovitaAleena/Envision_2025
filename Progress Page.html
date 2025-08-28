@@ -538,7 +538,7 @@
     </head>
     <body>
         <div class="header">
-            <a href="#" class="badges-btn" onclick="viewBadges()">🏆 Badges</a>
+            <a href="badge page.html" class="badges-btn">🏆 Badges</a>
             <h1>Study Progress Dashboard</h1>
             <p>Track your learning journey and achievements</p>
         </div>
@@ -1214,10 +1214,7 @@
                 console.log('Chart type changed to:', type);
             }
 
-            function viewBadges() {
-                // This would redirect to the badges page
-                alert('Redirecting to badges page... (This would show your earned badges and progress towards new ones)');
-            }
+            // Removed viewBadges function as redirect is now handled by anchor link
 
             // Initialize the page
             document.addEventListener('DOMContentLoaded', function() {
