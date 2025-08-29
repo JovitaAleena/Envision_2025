@@ -262,6 +262,18 @@
             box-shadow: 0 8px 20px rgba(102, 126, 234, 0.2);
         }
 
+        .mood-item.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .mood-item.selected .mood-label {
+            color: white;
+        }
+
         .mood-emoji {
             font-size: 2em;
             margin-bottom: 8px;
@@ -373,6 +385,18 @@
             color: white;
         }
 
+        .primary:disabled {
+            background: #a0a0a0;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .primary:not(:disabled):hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
         .secondary {
             background: #e2e8f0;
             color: #4a5568;
@@ -414,27 +438,32 @@
 
         .popup {
             background: white;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-            max-width: 400px;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
             width: 90%;
-            text-align: center;
+            text-align: left;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .popup h3 {
             color: #4a5568;
-            margin-bottom: 20px;
-            font-size: 1.3em;
+            margin-bottom: 25px;
+            font-size: 1.5em;
+            text-align: center;
+            font-weight: 600;
         }
 
         .recommendation {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
+            background: white;
+            color: #333;
+            padding: 0;
             border-radius: 12px;
             margin: 20px 0;
             line-height: 1.6;
+            text-align: left;
         }
 
         .tab-warning {
@@ -697,6 +726,7 @@
             </div>
             
             <div class="controls">
+                <button class="primary" id="studySessionBtn" onclick="startStudySession()" disabled style="opacity: 0.5; cursor: not-allowed;">Study Session</button>
                 <button class="back" onclick="backToMain()">Back</button>
             </div>
         </div>
@@ -753,7 +783,7 @@
             <div class="timer-display" id="display">00:00:00</div>
             <div class="timer-status" id="timerStatus">Ready to start your session! 📚</div>
             <div class="controls">
-                <button class="start" id="startBtn" onclick="startTimer()">Start</button>
+                <button class="start" id="startBtn" onclick="startTimer()">Start Session</button>
                 <button class="pause" id="pauseBtn" onclick="pauseTimer()">Pause</button>
                 <button class="reset" onclick="resetTimer()">Reset</button>
                 <button class="back" onclick="backToMain()">Back</button>
@@ -765,14 +795,25 @@
         <div class="popup">
             <h3>Study Recommendation</h3>
             <div class="recommendation" id="recommendation"></div>
-            <div class="controls">
-                <button class="start" onclick="startStudySession()">Start Timer</button>
+            <div class="controls" style="text-align: center; margin-top: 2rem;">
+                <button class="start" onclick="startStudySession()">Start Session</button>
                 <button class="reset" onclick="closePopup()">Close</button>
             </div>
         </div>
     </div>
 
     <script>
+        // Mood emoji mapping
+        const moodEmojis = {
+            happy: '😊',
+            sad: '😢',
+            sleepy: '😴',
+            tired: '😵',
+            energetic: '⚡',
+            focused: '🎯',
+            stressed: '😰'
+        };
+
         const moodData = {
             happy: {
                 subject: "Creative subjects like Literature or Art",
@@ -966,56 +1007,44 @@
 
         function selectMood(mood) {
             currentMood = mood;
-            const data = moodData[mood];
             
-            // Generate unique task ID for mood-based session
-            const taskId = Date.now() + '-mood-' + Math.random().toString(36).substr(2, 9);
+            // Remove selection from all mood items
+            document.querySelectorAll('.mood-item').forEach(item => {
+                item.classList.remove('selected');
+            });
             
-            currentTask = {
-                id: taskId,
-                type: 'mood',
-                name: `${mood.charAt(0).toUpperCase() + mood.slice(1)} Study Session`,
-                subject: data.subject,
-                activity: data.activity,
-                duration: data.duration,
-                mood: mood,
-                status: 'pending',
-                createdAt: new Date().toISOString(),
-                actualTimeSpent: 0,
-                dueDate: new Date().toISOString().split('T')[0] // Today
-            };
-
-            // Save mood-based task to storage
-            saveTaskToStorage(currentTask);
+            // Add selection to clicked mood item
+            event.target.closest('.mood-item').classList.add('selected');
             
-            targetTime = data.duration * 60;
-            timeLeft = targetTime;
-            
-            document.getElementById('recommendation').innerHTML = `
-                <strong>📖 Subject:</strong> ${data.subject}<br>
-                <strong>⏱️ Duration:</strong> ${data.duration} minutes<br>
-                <strong>💡 Reason:</strong> ${data.reason}<br>
-                <strong>✨ Activity:</strong> ${data.activity}
-            `;
-            document.getElementById('popupOverlay').style.display = 'flex';
+            // Enable the Study Session button
+            const studyButton = document.querySelector('#studySessionBtn');
+            if (studyButton) {
+                studyButton.disabled = false;
+                studyButton.style.opacity = '1';
+                studyButton.style.cursor = 'pointer';
+            }
         }
 
         function startStudySession() {
-            closePopup();
-            document.getElementById('moodScreen').style.display = 'none';
-            document.getElementById('timerContainer').style.display = 'block';
+            if (!currentMood) {
+                alert('Please select your mood first!');
+                return;
+            }
             
-            const data = moodData[currentMood];
-            document.getElementById('sessionInfo').innerHTML = `
-                <strong>Mood:</strong> ${currentMood.charAt(0).toUpperCase() + currentMood.slice(1)}<br>
-                <strong>Duration:</strong> ${data.duration} minutes<br>
-                <strong>Subject:</strong> ${data.subject}<br>
-                <strong>Activity:</strong> ${data.activity}
-            `;
-            updateTimerStatus('Session starting... Get ready! 📚');
-            timeLeft = targetTime;
-            document.getElementById('display').textContent = formatTime(timeLeft);
-            startTimer();
+            // Save session data to localStorage for the timer page
+            const sessionData = {
+                mood: currentMood,
+                duration: moodData[currentMood].duration,
+                subject: moodData[currentMood].subject,
+                activity: moodData[currentMood].activity,
+                reason: moodData[currentMood].reason,
+                startedAt: new Date().toISOString()
+            };
+            
+            localStorage.setItem('currentStudySession', JSON.stringify(sessionData));
+            
+            // Redirect to timer page
+            window.location.href = 'timer.html';
         }
 
         function updateTimer() {
